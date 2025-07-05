@@ -1,28 +1,27 @@
-import { useState } from 'react';
-import { Card, CardContent, CardHeader } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
-import { 
-  Star, 
-  Heart, 
-  Eye, 
-  Copy, 
-  Edit, 
-  Trash2, 
-  Share2, 
-  Play, 
+import { useState } from "react";
+import { Card, CardContent, CardHeader } from "./ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+import {
+  Star,
+  Heart,
+  Eye,
+  Copy,
+  Edit,
+  Trash2,
+  Share2,
+  Play,
   MoreHorizontal,
   User,
   Calendar,
-  Tag
-} from 'lucide-react';
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+} from "./ui/dropdown-menu";
 
 interface PromptCardProps {
   prompt: {
@@ -54,30 +53,32 @@ interface PromptCardProps {
 }
 
 const categoryColors: { [key: string]: string } = {
-  '文章生成': 'bg-blue-100 text-blue-800 border-blue-200',
-  '画像生成': 'bg-green-100 text-green-800 border-green-200',
-  'コード生成': 'bg-purple-100 text-purple-800 border-purple-200',
-  '分析・要約': 'bg-orange-100 text-orange-800 border-orange-200',
-  '翻訳': 'bg-red-100 text-red-800 border-red-200',
-  'アイデア出し': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  文章生成: "bg-blue-100 text-blue-800 border-blue-200",
+  画像生成: "bg-green-100 text-green-800 border-green-200",
+  コード生成: "bg-purple-100 text-purple-800 border-purple-200",
+  "分析・要約": "bg-orange-100 text-orange-800 border-orange-200",
+  翻訳: "bg-red-100 text-red-800 border-red-200",
+  アイデア出し: "bg-yellow-100 text-yellow-800 border-yellow-200",
 };
 
-export function PromptCard({ 
-  prompt, 
-  onEdit, 
-  onDelete, 
-  onRun, 
-  onToggleFavorite, 
-  onShare 
+export function PromptCard({
+  prompt,
+  onEdit,
+  onDelete,
+  onRun,
+  onToggleFavorite,
+  onShare,
 }: PromptCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  const categoryStyle = categoryColors[prompt.category] || 'bg-gray-100 text-gray-800 border-gray-200';
+  const categoryStyle =
+    categoryColors[prompt.category] ||
+    "bg-gray-100 text-gray-800 border-gray-200";
 
   return (
-    <Card 
+    <Card
       className={`h-full transition-all duration-200 hover:shadow-lg cursor-pointer ${
-        isHovered ? 'border-blue-300' : 'border-gray-200'
+        isHovered ? "border-blue-300" : "border-gray-200"
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -112,10 +113,12 @@ export function PromptCard({
               }}
               className="p-1 h-auto"
             >
-              <Heart 
+              <Heart
                 className={`h-4 w-4 ${
-                  prompt.isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'
-                }`} 
+                  prompt.isFavorite
+                    ? "fill-red-500 text-red-500"
+                    : "text-gray-400"
+                }`}
               />
             </Button>
             <DropdownMenu>
@@ -141,7 +144,10 @@ export function PromptCard({
                   <Copy className="mr-2 h-4 w-4" />
                   複製
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onDelete(prompt.id)} className="text-red-600">
+                <DropdownMenuItem
+                  onClick={() => onDelete(prompt.id)}
+                  className="text-red-600"
+                >
                   <Trash2 className="mr-2 h-4 w-4" />
                   削除
                 </DropdownMenuItem>
@@ -150,7 +156,7 @@ export function PromptCard({
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="pt-0">
         {/* Tags */}
         <div className="flex flex-wrap gap-1 mb-3">
@@ -168,9 +174,7 @@ export function PromptCard({
 
         {/* Content Preview */}
         <div className="bg-gray-50 rounded-md p-3 mb-3">
-          <p className="text-sm text-gray-700 line-clamp-3">
-            {prompt.content}
-          </p>
+          <p className="text-sm text-gray-700 line-clamp-3">{prompt.content}</p>
         </div>
 
         {/* Stats */}
@@ -196,7 +200,10 @@ export function PromptCard({
         <div className="flex items-center justify-between text-xs text-gray-500">
           <div className="flex items-center space-x-2">
             <Avatar className="h-5 w-5">
-              <AvatarImage src={prompt.author.avatar} alt={prompt.author.name} />
+              <AvatarImage
+                src={prompt.author.avatar}
+                alt={prompt.author.name}
+              />
               <AvatarFallback>
                 <User className="h-3 w-3" />
               </AvatarFallback>
@@ -211,11 +218,7 @@ export function PromptCard({
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-2 mt-3">
-          <Button
-            size="sm"
-            onClick={() => onRun(prompt.id)}
-            className="flex-1"
-          >
+          <Button size="sm" onClick={() => onRun(prompt.id)} className="flex-1">
             <Play className="h-4 w-4 mr-2" />
             実行
           </Button>

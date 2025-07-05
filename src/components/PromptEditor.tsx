@@ -1,29 +1,27 @@
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Textarea } from './ui/textarea';
-import { Badge } from './ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { ScrollArea } from './ui/scroll-area';
-import { Separator } from './ui/separator';
-import { 
-  Save, 
-  Play, 
-  Sparkles, 
-  Eye, 
-  Lightbulb, 
-  Layers, 
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Textarea } from "./ui/textarea";
+import { Badge } from "./ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { ScrollArea } from "./ui/scroll-area";
+import { Separator } from "./ui/separator";
+import {
+  Save,
+  Play,
+  Sparkles,
+  Eye,
+  Lightbulb,
+  Layers,
   X,
   Plus,
-  Tag,
-  Settings,
   AlertCircle,
   CheckCircle,
-  Zap
-} from 'lucide-react';
+  Zap,
+} from "lucide-react";
 
 interface PromptEditorProps {
   open: boolean;
@@ -36,54 +34,100 @@ interface PromptEditorProps {
     category: string;
     tags: string[];
   };
-  onSave: (prompt: any) => void;
+  onSave: (prompt: {
+    id: string;
+    title: string;
+    description: string;
+    content: string;
+    category: string;
+    tags: string[];
+  }) => void;
 }
 
 const categories = [
-  '文章生成', '画像生成', 'コード生成', '分析・要約', '翻訳', 'アイデア出し'
+  "文章生成",
+  "画像生成",
+  "コード生成",
+  "分析・要約",
+  "翻訳",
+  "アイデア出し",
 ];
 
 const aiSuggestions = [
   {
-    type: 'improvement',
-    title: 'より具体的な指示を追加',
-    description: 'プロンプトに具体的な出力形式を指定すると、より一貫した結果が得られます。',
-    suggestion: '以下の形式で出力してください：\n\n## タイトル\n内容...\n\n## 要約\n- ポイント1\n- ポイント2',
-    impact: 'high'
+    type: "improvement",
+    title: "より具体的な指示を追加",
+    description:
+      "プロンプトに具体的な出力形式を指定すると、より一貫した結果が得られます。",
+    suggestion:
+      "以下の形式で出力してください：\n\n## タイトル\n内容...\n\n## 要約\n- ポイント1\n- ポイント2",
+    impact: "high",
   },
   {
-    type: 'structure',
-    title: 'ペルソナ設定を追加',
-    description: 'AIに特定の役割を与えることで、より専門的な回答が期待できます。',
-    suggestion: 'あなたは経験豊富な{{職種}}です。{{専門知識}}を活用して回答してください。',
-    impact: 'medium'
+    type: "structure",
+    title: "ペルソナ設定を追加",
+    description:
+      "AIに特定の役割を与えることで、より専門的な回答が期待できます。",
+    suggestion:
+      "あなたは経験豊富な{{職種}}です。{{専門知識}}を活用して回答してください。",
+    impact: "medium",
   },
   {
-    type: 'example',
-    title: '例示の追加',
-    description: '具体例を示すことで、期待する出力の品質が向上します。',
-    suggestion: '例：\n入力: {{例1}}\n出力: {{例1の出力}}\n\n入力: {{例2}}\n出力: {{例2の出力}}',
-    impact: 'medium'
-  }
+    type: "example",
+    title: "例示の追加",
+    description: "具体例を示すことで、期待する出力の品質が向上します。",
+    suggestion:
+      "例：\n入力: {{例1}}\n出力: {{例1の出力}}\n\n入力: {{例2}}\n出力: {{例2の出力}}",
+    impact: "medium",
+  },
 ];
 
 const promptElements = [
-  { name: '目的・タスク', description: '何をさせたいのか', example: '商品説明文を作成する' },
-  { name: 'ペルソナ・役割', description: 'AIに演じてもらう役割', example: '経験豊富なコピーライター' },
-  { name: 'コンテキスト', description: '背景情報・前提条件', example: 'ECサイト用の商品説明文' },
-  { name: '制約・条件', description: '守るべきルールや制限', example: '200文字以内で簡潔に' },
-  { name: '出力形式', description: '結果の形式・構造', example: 'タイトル、説明、特徴の順番で' },
-  { name: '例示', description: '具体例やサンプル', example: '例：商品名「○○」→「魅力的な○○で...」' }
+  {
+    name: "目的・タスク",
+    description: "何をさせたいのか",
+    example: "商品説明文を作成する",
+  },
+  {
+    name: "ペルソナ・役割",
+    description: "AIに演じてもらう役割",
+    example: "経験豊富なコピーライター",
+  },
+  {
+    name: "コンテキスト",
+    description: "背景情報・前提条件",
+    example: "ECサイト用の商品説明文",
+  },
+  {
+    name: "制約・条件",
+    description: "守るべきルールや制限",
+    example: "200文字以内で簡潔に",
+  },
+  {
+    name: "出力形式",
+    description: "結果の形式・構造",
+    example: "タイトル、説明、特徴の順番で",
+  },
+  {
+    name: "例示",
+    description: "具体例やサンプル",
+    example: "例：商品名「○○」→「魅力的な○○で...」",
+  },
 ];
 
-export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEditorProps) {
-  const [title, setTitle] = useState(prompt?.title || '');
-  const [description, setDescription] = useState(prompt?.description || '');
-  const [content, setContent] = useState(prompt?.content || '');
-  const [category, setCategory] = useState(prompt?.category || '');
+export function PromptEditor({
+  open,
+  onOpenChange,
+  prompt,
+  onSave,
+}: PromptEditorProps) {
+  const [title, setTitle] = useState(prompt?.title || "");
+  const [description, setDescription] = useState(prompt?.description || "");
+  const [content, setContent] = useState(prompt?.content || "");
+  const [category, setCategory] = useState(prompt?.category || "");
   const [tags, setTags] = useState<string[]>(prompt?.tags || []);
-  const [newTag, setNewTag] = useState('');
-  const [activeTab, setActiveTab] = useState('editor');
+  const [newTag, setNewTag] = useState("");
+  const [activeTab, setActiveTab] = useState("editor");
 
   const handleSave = () => {
     const promptData = {
@@ -92,7 +136,7 @@ export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEdito
       description,
       content,
       category,
-      tags
+      tags,
     };
     onSave(promptData);
     onOpenChange(false);
@@ -101,16 +145,16 @@ export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEdito
   const handleAddTag = () => {
     if (newTag.trim() && !tags.includes(newTag.trim())) {
       setTags([...tags, newTag.trim()]);
-      setNewTag('');
+      setNewTag("");
     }
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
+    setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
   const applySuggestion = (suggestion: string) => {
-    setContent(content + '\n\n' + suggestion);
+    setContent(content + "\n\n" + suggestion);
   };
 
   return (
@@ -119,12 +163,16 @@ export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEdito
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Sparkles className="h-5 w-5" />
-            <span>{prompt ? 'プロンプト編集' : '新規プロンプト作成'}</span>
+            <span>{prompt ? "プロンプト編集" : "新規プロンプト作成"}</span>
           </DialogTitle>
         </DialogHeader>
 
         <div className="flex-1 overflow-hidden">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="h-full flex flex-col"
+          >
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="editor">エディタ</TabsTrigger>
               <TabsTrigger value="suggestions">AI提案</TabsTrigger>
@@ -151,7 +199,7 @@ export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEdito
                             placeholder="プロンプトのタイトルを入力"
                           />
                         </div>
-                        
+
                         <div>
                           <Label htmlFor="description">説明</Label>
                           <Textarea
@@ -173,7 +221,9 @@ export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEdito
                           >
                             <option value="">カテゴリーを選択</option>
                             {categories.map((cat) => (
-                              <option key={cat} value={cat}>{cat}</option>
+                              <option key={cat} value={cat}>
+                                {cat}
+                              </option>
                             ))}
                           </select>
                         </div>
@@ -182,7 +232,11 @@ export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEdito
                           <Label>タグ</Label>
                           <div className="flex flex-wrap gap-2 mb-2">
                             {tags.map((tag) => (
-                              <Badge key={tag} variant="secondary" className="flex items-center space-x-1">
+                              <Badge
+                                key={tag}
+                                variant="secondary"
+                                className="flex items-center space-x-1"
+                              >
                                 <span>{tag}</span>
                                 <button
                                   onClick={() => handleRemoveTag(tag)}
@@ -199,13 +253,17 @@ export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEdito
                               onChange={(e) => setNewTag(e.target.value)}
                               placeholder="新しいタグを追加"
                               onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
+                                if (e.key === "Enter") {
                                   e.preventDefault();
                                   handleAddTag();
                                 }
                               }}
                             />
-                            <Button type="button" onClick={handleAddTag} size="sm">
+                            <Button
+                              type="button"
+                              onClick={handleAddTag}
+                              size="sm"
+                            >
                               <Plus className="h-4 w-4" />
                             </Button>
                           </div>
@@ -218,7 +276,9 @@ export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEdito
                   <div className="space-y-4">
                     <Card className="h-full">
                       <CardHeader>
-                        <CardTitle className="text-lg">プロンプト内容</CardTitle>
+                        <CardTitle className="text-lg">
+                          プロンプト内容
+                        </CardTitle>
                       </CardHeader>
                       <CardContent>
                         <Textarea
@@ -230,7 +290,10 @@ export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEdito
                         />
                         <div className="flex justify-between items-center mt-2 text-sm text-gray-500">
                           <span>{content.length} 文字</span>
-                          <span>変数: &#123;&#123;variable_name&#125;&#125; 形式で使用</span>
+                          <span>
+                            変数: &#123;&#123;variable_name&#125;&#125;
+                            形式で使用
+                          </span>
                         </div>
                       </CardContent>
                     </Card>
@@ -245,40 +308,62 @@ export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEdito
                       <Lightbulb className="h-5 w-5 text-yellow-500" />
                       <h3 className="text-lg font-semibold">AI改善提案</h3>
                     </div>
-                    
+
                     {aiSuggestions.map((suggestion, index) => (
                       <Card key={index}>
                         <CardHeader>
                           <div className="flex items-center justify-between">
                             <CardTitle className="text-base flex items-center space-x-2">
-                              <div className={`p-1 rounded-full ${
-                                suggestion.impact === 'high' ? 'bg-red-100 text-red-600' :
-                                suggestion.impact === 'medium' ? 'bg-yellow-100 text-yellow-600' :
-                                'bg-green-100 text-green-600'
-                              }`}>
-                                {suggestion.impact === 'high' ? <AlertCircle className="h-4 w-4" /> :
-                                 suggestion.impact === 'medium' ? <Zap className="h-4 w-4" /> :
-                                 <CheckCircle className="h-4 w-4" />}
+                              <div
+                                className={`p-1 rounded-full ${
+                                  suggestion.impact === "high"
+                                    ? "bg-red-100 text-red-600"
+                                    : suggestion.impact === "medium"
+                                    ? "bg-yellow-100 text-yellow-600"
+                                    : "bg-green-100 text-green-600"
+                                }`}
+                              >
+                                {suggestion.impact === "high" ? (
+                                  <AlertCircle className="h-4 w-4" />
+                                ) : suggestion.impact === "medium" ? (
+                                  <Zap className="h-4 w-4" />
+                                ) : (
+                                  <CheckCircle className="h-4 w-4" />
+                                )}
                               </div>
                               <span>{suggestion.title}</span>
                             </CardTitle>
-                            <Badge variant={
-                              suggestion.impact === 'high' ? 'destructive' :
-                              suggestion.impact === 'medium' ? 'default' : 'secondary'
-                            }>
-                              {suggestion.impact === 'high' ? '高' :
-                               suggestion.impact === 'medium' ? '中' : '低'}
+                            <Badge
+                              variant={
+                                suggestion.impact === "high"
+                                  ? "destructive"
+                                  : suggestion.impact === "medium"
+                                  ? "default"
+                                  : "secondary"
+                              }
+                            >
+                              {suggestion.impact === "high"
+                                ? "高"
+                                : suggestion.impact === "medium"
+                                ? "中"
+                                : "低"}
                             </Badge>
                           </div>
                         </CardHeader>
                         <CardContent>
-                          <p className="text-sm text-gray-600 mb-3">{suggestion.description}</p>
+                          <p className="text-sm text-gray-600 mb-3">
+                            {suggestion.description}
+                          </p>
                           <div className="bg-gray-50 p-3 rounded-md mb-3">
-                            <pre className="text-sm whitespace-pre-wrap">{suggestion.suggestion}</pre>
+                            <pre className="text-sm whitespace-pre-wrap">
+                              {suggestion.suggestion}
+                            </pre>
                           </div>
-                          <Button 
-                            size="sm" 
-                            onClick={() => applySuggestion(suggestion.suggestion)}
+                          <Button
+                            size="sm"
+                            onClick={() =>
+                              applySuggestion(suggestion.suggestion)
+                            }
                             className="w-full"
                           >
                             適用する
@@ -295,19 +380,29 @@ export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEdito
                   <div className="space-y-4">
                     <div className="flex items-center space-x-2 mb-4">
                       <Layers className="h-5 w-5 text-blue-500" />
-                      <h3 className="text-lg font-semibold">プロンプト要素分解</h3>
+                      <h3 className="text-lg font-semibold">
+                        プロンプト要素分解
+                      </h3>
                     </div>
-                    
+
                     {promptElements.map((element, index) => (
                       <Card key={index}>
                         <CardHeader>
-                          <CardTitle className="text-base">{element.name}</CardTitle>
+                          <CardTitle className="text-base">
+                            {element.name}
+                          </CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <p className="text-sm text-gray-600 mb-2">{element.description}</p>
+                          <p className="text-sm text-gray-600 mb-2">
+                            {element.description}
+                          </p>
                           <div className="bg-blue-50 p-3 rounded-md">
-                            <p className="text-sm font-medium text-blue-800">例:</p>
-                            <p className="text-sm text-blue-700">{element.example}</p>
+                            <p className="text-sm font-medium text-blue-800">
+                              例:
+                            </p>
+                            <p className="text-sm text-blue-700">
+                              {element.example}
+                            </p>
                           </div>
                         </CardContent>
                       </Card>
@@ -322,32 +417,46 @@ export function PromptEditor({ open, onOpenChange, prompt, onSave }: PromptEdito
                     <Eye className="h-5 w-5 text-green-500" />
                     <h3 className="text-lg font-semibold">プレビュー</h3>
                   </div>
-                  
+
                   <Card className="h-full">
                     <CardHeader>
                       <CardTitle className="flex items-center justify-between">
-                        <span>{title || 'プロンプトタイトル'}</span>
-                        <Badge variant="outline">{category || 'カテゴリー未設定'}</Badge>
+                        <span>{title || "プロンプトタイトル"}</span>
+                        <Badge variant="outline">
+                          {category || "カテゴリー未設定"}
+                        </Badge>
                       </CardTitle>
                       <div className="flex flex-wrap gap-2">
                         {tags.map((tag) => (
-                          <Badge key={tag} variant="secondary">{tag}</Badge>
+                          <Badge key={tag} variant="secondary">
+                            {tag}
+                          </Badge>
                         ))}
                       </div>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         <div>
-                          <Label className="text-sm font-medium text-gray-700">説明</Label>
-                          <p className="text-sm text-gray-600">{description || 'プロンプトの説明がここに表示されます'}</p>
+                          <Label className="text-sm font-medium text-gray-700">
+                            説明
+                          </Label>
+                          <p className="text-sm text-gray-600">
+                            {description ||
+                              "プロンプトの説明がここに表示されます"}
+                          </p>
                         </div>
-                        
+
                         <Separator />
-                        
+
                         <div>
-                          <Label className="text-sm font-medium text-gray-700">プロンプト内容</Label>
+                          <Label className="text-sm font-medium text-gray-700">
+                            プロンプト内容
+                          </Label>
                           <div className="bg-gray-50 p-4 rounded-md mt-2">
-                            <pre className="text-sm whitespace-pre-wrap">{content || 'プロンプトの内容がここに表示されます'}</pre>
+                            <pre className="text-sm whitespace-pre-wrap">
+                              {content ||
+                                "プロンプトの内容がここに表示されます"}
+                            </pre>
                           </div>
                         </div>
                       </div>

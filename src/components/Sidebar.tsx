@@ -1,56 +1,58 @@
-import { useState } from 'react';
-import { Button } from './ui/button';
-import { ScrollArea } from './ui/scroll-area';
-import { Badge } from './ui/badge';
-import { 
-  Home, 
-  FileText, 
-  Star, 
-  Puzzle, 
-  Users, 
-  Trophy, 
-  BarChart3, 
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { ScrollArea } from "./ui/scroll-area";
+import { Badge } from "./ui/badge";
+import {
+  Home,
+  FileText,
+  Star,
+  Puzzle,
+  Users,
+  Trophy,
+  BarChart3,
   Settings,
-  Search,
   Filter,
   Calendar,
   Tag,
   ChevronDown,
-  ChevronRight
-} from 'lucide-react';
+  ChevronRight,
+} from "lucide-react";
 
 interface SidebarProps {
   isCollapsed: boolean;
-  onToggle: () => void;
 }
 
 const menuItems = [
-  { icon: Home, label: 'ダッシュボード', href: '/', badge: null },
-  { icon: FileText, label: 'マイプロンプト', href: '/prompts', badge: 243 },
-  { icon: Star, label: 'お気に入り', href: '/favorites', badge: 12 },
-  { icon: Puzzle, label: 'テンプレート', href: '/templates', badge: 8 },
-  { icon: Users, label: '共有・チーム', href: '/sharing', badge: 3 },
-  { icon: Trophy, label: 'コミュニティ', href: '/community', badge: null },
-  { icon: BarChart3, label: '統計・分析', href: '/analytics', badge: null },
-  { icon: Settings, label: '設定', href: '/settings', badge: null },
+  { icon: Home, label: "ダッシュボード", href: "/", badge: null },
+  { icon: FileText, label: "マイプロンプト", href: "/prompts", badge: 243 },
+  { icon: Star, label: "お気に入り", href: "/favorites", badge: 12 },
+  { icon: Puzzle, label: "テンプレート", href: "/templates", badge: 8 },
+  { icon: Users, label: "共有・チーム", href: "/sharing", badge: 3 },
+  { icon: Trophy, label: "コミュニティ", href: "/community", badge: null },
+  { icon: BarChart3, label: "統計・分析", href: "/analytics", badge: null },
+  { icon: Settings, label: "設定", href: "/settings", badge: null },
 ];
 
 const filterCategories = [
-  { name: '文章生成', count: 87, color: 'bg-blue-500' },
-  { name: '画像生成', count: 23, color: 'bg-green-500' },
-  { name: 'コード生成', count: 45, color: 'bg-purple-500' },
-  { name: '分析・要約', count: 34, color: 'bg-orange-500' },
-  { name: '翻訳', count: 19, color: 'bg-red-500' },
-  { name: 'アイデア出し', count: 31, color: 'bg-yellow-500' },
+  { name: "文章生成", count: 87, color: "bg-blue-500" },
+  { name: "画像生成", count: 23, color: "bg-green-500" },
+  { name: "コード生成", count: 45, color: "bg-purple-500" },
+  { name: "分析・要約", count: 34, color: "bg-orange-500" },
+  { name: "翻訳", count: 19, color: "bg-red-500" },
+  { name: "アイデア出し", count: 31, color: "bg-yellow-500" },
 ];
 
-export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
-  const [activeItem, setActiveItem] = useState('ダッシュボード');
+export function Sidebar({ isCollapsed }: SidebarProps) {
+  const [activeItem, setActiveItem] = useState("ダッシュボード");
   const [showCategories, setShowCategories] = useState(true);
   const [showTags, setShowTags] = useState(true);
 
   return (
-    <div className={`h-full bg-white border-r border-gray-200 flex flex-col ${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300`}>
+    <div
+      className={`h-full bg-white border-r border-gray-200 flex flex-col ${
+        isCollapsed ? "w-16" : "w-64"
+      } transition-all duration-300`}
+    >
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         {!isCollapsed && (
@@ -65,9 +67,11 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
             {menuItems.map((item) => (
               <Button
                 key={item.label}
-                variant={activeItem === item.label ? 'default' : 'ghost'}
+                variant={activeItem === item.label ? "default" : "ghost"}
                 size="sm"
-                className={`w-full justify-start ${isCollapsed ? 'px-2' : 'px-3'}`}
+                className={`w-full justify-start ${
+                  isCollapsed ? "px-2" : "px-3"
+                }`}
                 onClick={() => setActiveItem(item.label)}
               >
                 <item.icon className="h-4 w-4 mr-2" />
@@ -115,8 +119,12 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                         size="sm"
                         className="w-full justify-start p-2 h-auto"
                       >
-                        <div className={`w-2 h-2 rounded-full ${category.color} mr-2`} />
-                        <span className="flex-1 text-left text-sm">{category.name}</span>
+                        <div
+                          className={`w-2 h-2 rounded-full ${category.color} mr-2`}
+                        />
+                        <span className="flex-1 text-left text-sm">
+                          {category.name}
+                        </span>
                         <Badge variant="outline" className="ml-auto text-xs">
                           {category.count}
                         </Badge>
@@ -144,16 +152,18 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                 </Button>
                 {showTags && (
                   <div className="ml-4 mt-2 space-y-1">
-                    {['チャット', 'コード', '画像', '分析', '翻訳'].map((tag) => (
-                      <Button
-                        key={tag}
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start p-2 h-auto"
-                      >
-                        <span className="text-sm">{tag}</span>
-                      </Button>
-                    ))}
+                    {["チャット", "コード", "画像", "分析", "翻訳"].map(
+                      (tag) => (
+                        <Button
+                          key={tag}
+                          variant="ghost"
+                          size="sm"
+                          className="w-full justify-start p-2 h-auto"
+                        >
+                          <span className="text-sm">{tag}</span>
+                        </Button>
+                      )
+                    )}
                   </div>
                 )}
               </div>
