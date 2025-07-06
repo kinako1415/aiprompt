@@ -15,18 +15,18 @@ export function QuickActionsSection({
   onCreatePrompt,
   onCreateFromTemplate,
   onImport,
-  onAiAssistant
+  onAiAssistant,
 }: QuickActionsSectionProps) {
   return (
-    <Card className="border border-gray-50">
-      <CardHeader className="pb-4">
+    <Card className="border border-gray-100">
+      <CardHeader className="pb-3">
         <CardTitle className="flex items-center space-x-2 text-lg">
           <Sparkles className="h-5 w-5" />
           <span>クイックアクション</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           <QuickActionButton
             icon={<Plus className="h-6 w-6" />}
             label="新規プロンプト作成"

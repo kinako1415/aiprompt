@@ -55,12 +55,12 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
 
   return (
     <div
-      className={`h-full bg-white border-r border-gray-50 flex flex-col ${
+      className={`h-full bg-white border-r border-gray-100 flex flex-col ${
         isCollapsed ? "w-16" : "w-64"
       } transition-all duration-300`}
     >
       {/* Header */}
-      <div className="p-4 border-b border-gray-100/50">
+      <div className="p-4 border-b border-gray-100">
         {!isCollapsed && (
           <h1 className="text-xl font-bold text-gray-900">PromptHub</h1>
         )}
@@ -78,8 +78,8 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
                 className={`w-full justify-start ${
                   isCollapsed ? "px-2" : "px-3"
                 } ${
-                  pathname === item.href 
-                    ? "bg-gray-900 text-white hover:bg-gray-800" 
+                  pathname === item.href
+                    ? "bg-gray-900 text-white hover:bg-gray-800"
                     : "hover:bg-gray-100 text-gray-700"
                 }`}
                 onClick={() => handleNavigation(item.href)}
@@ -87,9 +87,14 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
                 <item.icon className="h-4 w-4 mr-2" />
                 {!isCollapsed && (
                   <>
-                    <span className="flex-1 text-left">{item.label}</span>
+                    <span className="flex-1 text-left font-medium">
+                      {item.label}
+                    </span>
                     {item.badge && (
-                      <Badge variant="secondary" className="ml-auto bg-gray-100 text-gray-600 hover:bg-gray-200">
+                      <Badge
+                        variant="secondary"
+                        className="ml-auto bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      >
                         {item.badge}
                       </Badge>
                     )}
@@ -102,7 +107,7 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
 
         {/* Filters Section */}
         {!isCollapsed && (
-          <div className="p-2 border-t border-gray-100/50 mt-4">
+          <div className="p-2 border-t border-gray-100 mt-4">
             <div className="space-y-4">
               {/* Categories */}
               <div>
@@ -135,7 +140,10 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
                         <span className="flex-1 text-left text-sm">
                           {category.name}
                         </span>
-                        <Badge variant="outline" className="ml-auto text-xs border-gray-300 text-gray-500">
+                        <Badge
+                          variant="outline"
+                          className="ml-auto text-xs border-gray-100 text-gray-500"
+                        >
                           {category.count}
                         </Badge>
                       </Button>

@@ -2,12 +2,7 @@ import { useState } from "react";
 import { DashboardStats } from "./ui/dashboard-stats";
 import { QuickActionsSection } from "./ui/quick-actions-section";
 import { PromptListSection } from "./ui/prompt-list-section";
-import {
-  TrendingUp,
-  FileText,
-  Star,
-  Eye,
-} from "lucide-react";
+import { TrendingUp, FileText, Star, Eye } from "lucide-react";
 
 interface DashboardProps {
   onCreatePrompt: () => void;
@@ -163,7 +158,7 @@ export function Dashboard({ onCreatePrompt }: DashboardProps) {
   };
 
   return (
-    <div className="p-8 space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 space-y-4 max-w-7xl mx-auto">
       {/* Stats Cards */}
       <DashboardStats stats={dashboardStats} />
 

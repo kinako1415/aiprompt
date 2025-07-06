@@ -47,7 +47,7 @@ export function PromptListTabs({
   onPromptDelete,
   onPromptRun,
   onPromptLike,
-  onPromptShare
+  onPromptShare,
 }: PromptListTabsProps) {
   const getGridClasses = () => {
     return viewMode === "grid"
@@ -73,27 +73,45 @@ export function PromptListTabs({
 
   return (
     <Tabs value={activeTab} onValueChange={onTabChange}>
-      <TabsList className="mb-4">
-        <TabsTrigger value="all">すべて</TabsTrigger>
-        <TabsTrigger value="recent">最近使用</TabsTrigger>
-        <TabsTrigger value="favorites">お気に入り</TabsTrigger>
-        <TabsTrigger value="public">公開中</TabsTrigger>
+      <TabsList className="mb-4 bg-gray-50 p-1 rounded-lg">
+        <TabsTrigger
+          value="all"
+          className="rounded-md px-4 py-2 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 text-gray-600 hover:text-gray-900"
+        >
+          すべて
+        </TabsTrigger>
+        <TabsTrigger
+          value="recent"
+          className="rounded-md px-4 py-2 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 text-gray-600 hover:text-gray-900"
+        >
+          最近使用
+        </TabsTrigger>
+        <TabsTrigger
+          value="favorites"
+          className="rounded-md px-4 py-2 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 text-gray-600 hover:text-gray-900"
+        >
+          お気に入り
+        </TabsTrigger>
+        <TabsTrigger
+          value="public"
+          className="rounded-md px-4 py-2 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 text-gray-600 hover:text-gray-900"
+        >
+          公開中
+        </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="all">
-        {renderPromptGrid(prompts)}
-      </TabsContent>
+      <TabsContent value="all">{renderPromptGrid(prompts)}</TabsContent>
 
       <TabsContent value="recent">
         {renderPromptGrid(prompts.slice(0, 2))}
       </TabsContent>
 
       <TabsContent value="favorites">
-        {renderPromptGrid(prompts.filter(p => p.isFavorite))}
+        {renderPromptGrid(prompts.filter((p) => p.isFavorite))}
       </TabsContent>
 
       <TabsContent value="public">
-        {renderPromptGrid(prompts.filter(p => p.isPublic))}
+        {renderPromptGrid(prompts.filter((p) => p.isPublic))}
       </TabsContent>
     </Tabs>
   );

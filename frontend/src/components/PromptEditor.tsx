@@ -217,7 +217,7 @@ export function PromptEditor({
                             id="category"
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded-md"
+                            className="w-full p-2 border border-gray-100 rounded-md"
                           >
                             <option value="">カテゴリーを選択</option>
                             {categories.map((cat) => (
@@ -468,7 +468,7 @@ export function PromptEditor({
           </Tabs>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t">
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             キャンセル
           </Button>

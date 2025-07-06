@@ -6,17 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Search, 
-  Filter, 
-  Grid3X3, 
-  List, 
+import {
+  Search,
+  Filter,
+  Grid3X3,
+  List,
   Plus,
   Puzzle,
   Star,
   Copy,
   Edit,
-  Eye
+  Eye,
 } from "lucide-react";
 
 // テンプレートのサンプルデータ
@@ -24,7 +24,8 @@ const templateData = [
   {
     id: "1",
     title: "ブログ記事作成テンプレート",
-    description: "SEOに最適化されたブログ記事を効率的に作成するためのテンプレート",
+    description:
+      "SEOに最適化されたブログ記事を効率的に作成するためのテンプレート",
     category: "文章生成",
     tags: ["ブログ", "SEO", "マーケティング"],
     variables: ["タイトル", "キーワード", "対象読者", "記事の長さ"],
@@ -32,7 +33,7 @@ const templateData = [
     rating: 4.7,
     isPopular: true,
     author: "マーケティングチーム",
-    createdAt: "2024-01-01T00:00:00Z"
+    createdAt: "2024-01-01T00:00:00Z",
   },
   {
     id: "2",
@@ -45,7 +46,7 @@ const templateData = [
     rating: 4.4,
     isPopular: false,
     author: "プロダクトチーム",
-    createdAt: "2023-12-15T00:00:00Z"
+    createdAt: "2023-12-15T00:00:00Z",
   },
   {
     id: "3",
@@ -58,8 +59,8 @@ const templateData = [
     rating: 4.9,
     isPopular: true,
     author: "ビジネスチーム",
-    createdAt: "2023-11-20T00:00:00Z"
-  }
+    createdAt: "2023-11-20T00:00:00Z",
+  },
 ];
 
 export default function TemplatesPage() {
@@ -71,7 +72,11 @@ export default function TemplatesPage() {
     console.log(`${action} action for template ${templateId}`);
   };
 
-  const TemplateCard = ({ template }: { template: typeof templateData[0] }) => (
+  const TemplateCard = ({
+    template,
+  }: {
+    template: (typeof templateData)[0];
+  }) => (
     <Card className="hover:shadow-md transition-shadow cursor-pointer">
       <CardHeader>
         <div className="flex items-start justify-between">
@@ -80,13 +85,16 @@ export default function TemplatesPage() {
               <Puzzle className="h-5 w-5 text-blue-600" />
               <CardTitle className="text-lg">{template.title}</CardTitle>
               {template.isPopular && (
-                <Badge variant="secondary" className="bg-orange-100 text-orange-700">
+                <Badge
+                  variant="secondary"
+                  className="bg-orange-100 text-orange-700"
+                >
                   人気
                 </Badge>
               )}
             </div>
             <p className="text-sm text-gray-600 mb-3">{template.description}</p>
-            
+
             <div className="flex items-center gap-2 mb-2">
               <Badge variant="outline">{template.category}</Badge>
               {template.tags.slice(0, 2).map((tag) => (
@@ -95,7 +103,9 @@ export default function TemplatesPage() {
                 </Badge>
               ))}
               {template.tags.length > 2 && (
-                <span className="text-xs text-gray-500">+{template.tags.length - 2}</span>
+                <span className="text-xs text-gray-500">
+                  +{template.tags.length - 2}
+                </span>
               )}
             </div>
 
@@ -118,7 +128,7 @@ export default function TemplatesPage() {
               {template.rating}
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-1">
             <Button
               variant="ghost"
@@ -148,15 +158,17 @@ export default function TemplatesPage() {
   );
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 space-y-4">
       {/* ページヘッダー */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+          <h1 className="text-2xl font-semibold text-gray-900 flex items-center">
             <Puzzle className="h-6 w-6 mr-2 text-blue-600" />
             テンプレート
           </h1>
-          <p className="text-gray-600 mt-1">再利用可能なプロンプトテンプレートライブラリ</p>
+          <p className="text-gray-600 mt-1 font-normal">
+            再利用可能なプロンプトテンプレートライブラリ
+          </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm">
@@ -167,44 +179,54 @@ export default function TemplatesPage() {
       </div>
 
       {/* 統計情報 */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">総テンプレート数</CardTitle>
+          <CardHeader className="pb-1">
+            <CardTitle className="text-xs font-medium text-gray-500">
+              総テンプレート数
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">8</div>
-            <p className="text-xs text-green-600 mt-1">+2 今月</p>
+          <CardContent className="pt-1">
+            <div className="text-xl font-bold">8</div>
+            <p className="text-xs text-green-600 mt-0.5 font-medium">+2 今月</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">人気テンプレート</CardTitle>
+          <CardHeader className="pb-1">
+            <CardTitle className="text-xs font-medium text-gray-500">
+              人気テンプレート
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-blue-600 mt-1">高使用率</p>
+          <CardContent className="pt-1">
+            <div className="text-xl font-bold">3</div>
+            <p className="text-xs text-blue-600 mt-0.5 font-medium">高使用率</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">総使用回数</CardTitle>
+          <CardHeader className="pb-1">
+            <CardTitle className="text-xs font-medium text-gray-500">
+              総使用回数
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">2,528</div>
-            <p className="text-xs text-green-600 mt-1">+156 今週</p>
+          <CardContent className="pt-1">
+            <div className="text-xl font-bold">2,528</div>
+            <p className="text-xs text-green-600 mt-0.5 font-medium">
+              +156 今週
+            </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">平均評価</CardTitle>
+          <CardHeader className="pb-1">
+            <CardTitle className="text-xs font-medium text-gray-500">
+              平均評価
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">4.7</div>
-            <p className="text-xs text-green-600 mt-1">高品質</p>
+          <CardContent className="pt-1">
+            <div className="text-xl font-bold">4.7</div>
+            <p className="text-xs text-green-600 mt-0.5 font-medium">高品質</p>
           </CardContent>
         </Card>
       </div>
@@ -223,14 +245,14 @@ export default function TemplatesPage() {
                   className="pl-10"
                 />
               </div>
-              
+
               <Button variant="outline" size="sm">
                 <Filter className="h-4 w-4 mr-2" />
                 フィルター
               </Button>
             </div>
 
-            <div className="flex items-center border rounded-lg p-1">
+            <div className="flex items-center border border-gray-100 rounded-lg p-1">
               <Button
                 variant={viewMode === "grid" ? "default" : "ghost"}
                 size="sm"
@@ -254,18 +276,22 @@ export default function TemplatesPage() {
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-4">
-              <TabsTrigger value="all">すべて ({templateData.length})</TabsTrigger>
+              <TabsTrigger value="all">
+                すべて ({templateData.length})
+              </TabsTrigger>
               <TabsTrigger value="popular">人気</TabsTrigger>
               <TabsTrigger value="recent">最新</TabsTrigger>
               <TabsTrigger value="category">カテゴリ別</TabsTrigger>
             </TabsList>
 
             <TabsContent value={activeTab}>
-              <div className={`grid gap-4 ${
-                viewMode === "grid" 
-                  ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
-                  : "grid-cols-1"
-              }`}>
+              <div
+                className={`grid gap-4 ${
+                  viewMode === "grid"
+                    ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                    : "grid-cols-1"
+                }`}
+              >
                 {templateData.map((template) => (
                   <TemplateCard key={template.id} template={template} />
                 ))}
@@ -274,7 +300,9 @@ export default function TemplatesPage() {
               {templateData.length === 0 && (
                 <div className="text-center py-12">
                   <Puzzle className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 mb-4">テンプレートがまだありません</p>
+                  <p className="text-gray-500 mb-4">
+                    テンプレートがまだありません
+                  </p>
                   <Button>
                     <Plus className="h-4 w-4 mr-2" />
                     最初のテンプレートを作成

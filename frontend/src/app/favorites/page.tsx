@@ -6,27 +6,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PromptCard } from "@/components/PromptCard";
-import { 
-  Search, 
-  Filter, 
-  Grid3X3, 
-  List, 
-  Heart,
-  Clock
-} from "lucide-react";
+import { Search, Filter, Grid3X3, List, Heart, Clock } from "lucide-react";
 
 // お気に入りプロンプトのサンプルデータ
 const favoritePrompts = [
   {
     id: "1",
     title: "商品説明文生成プロンプト",
-    description: "ECサイト用の魅力的な商品説明文を生成するためのプロンプトテンプレート",
-    content: "あなたは優秀なコピーライターです。以下の商品情報を基に、魅力的で購買意欲を刺激する商品説明文を作成してください。",
+    description:
+      "ECサイト用の魅力的な商品説明文を生成するためのプロンプトテンプレート",
+    content:
+      "あなたは優秀なコピーライターです。以下の商品情報を基に、魅力的で購買意欲を刺激する商品説明文を作成してください。",
     category: "EC",
     tags: ["コピーライティング", "マーケティング"],
     author: {
       id: "user1",
-      name: "田中太郎"
+      name: "田中太郎",
     },
     rating: 4.8,
     ratingCount: 24,
@@ -36,18 +31,20 @@ const favoritePrompts = [
     isPublic: true,
     isFavorite: true,
     createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-03T00:00:00Z"
+    updatedAt: "2024-01-03T00:00:00Z",
   },
   {
     id: "3",
     title: "会議議事録整理プロンプト",
-    description: "長い会議の議事録から要点を抽出し、アクションアイテムを整理するプロンプト",
-    content: "以下の会議議事録を分析し、重要な要点を抽出してアクションアイテムを整理してください：",
+    description:
+      "長い会議の議事録から要点を抽出し、アクションアイテムを整理するプロンプト",
+    content:
+      "以下の会議議事録を分析し、重要な要点を抽出してアクションアイテムを整理してください：",
     category: "分析・要約",
     tags: ["会議", "議事録", "ビジネス"],
     author: {
       id: "user3",
-      name: "鈴木次郎"
+      name: "鈴木次郎",
     },
     rating: 4.3,
     ratingCount: 31,
@@ -57,8 +54,8 @@ const favoritePrompts = [
     isPublic: true,
     isFavorite: true,
     createdAt: "2023-12-20T00:00:00Z",
-    updatedAt: "2023-12-28T00:00:00Z"
-  }
+    updatedAt: "2023-12-28T00:00:00Z",
+  },
 ];
 
 export default function FavoritesPage() {
@@ -71,47 +68,59 @@ export default function FavoritesPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 space-y-4">
       {/* ページヘッダー */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+          <h1 className="text-2xl font-semibold text-gray-900 flex items-center">
             <Heart className="h-6 w-6 mr-2 text-red-500" />
             お気に入り
           </h1>
-          <p className="text-gray-600 mt-1">お気に入りに追加したプロンプトを管理できます</p>
+          <p className="text-gray-600 mt-1 font-normal">
+            お気に入りに追加したプロンプトを管理できます
+          </p>
         </div>
       </div>
 
       {/* 統計情報 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">お気に入り数</CardTitle>
+          <CardHeader className="pb-1">
+            <CardTitle className="text-xs font-medium text-gray-500">
+              お気に入り数
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-green-600 mt-1">+2 今週</p>
+          <CardContent className="pt-1">
+            <div className="text-xl font-bold">12</div>
+            <p className="text-xs text-green-600 mt-0.5 font-medium">+2 今週</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">平均評価</CardTitle>
+          <CardHeader className="pb-1">
+            <CardTitle className="text-xs font-medium text-gray-500">
+              平均評価
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">4.6</div>
-            <p className="text-xs text-blue-600 mt-1">高評価プロンプト</p>
+          <CardContent className="pt-1">
+            <div className="text-xl font-bold">4.6</div>
+            <p className="text-xs text-blue-600 mt-0.5 font-medium">
+              高評価プロンプト
+            </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">最近追加</CardTitle>
+          <CardHeader className="pb-1">
+            <CardTitle className="text-xs font-medium text-gray-500">
+              最近追加
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-gray-600 mt-1">今月追加分</p>
+          <CardContent className="pt-1">
+            <div className="text-xl font-bold">3</div>
+            <p className="text-xs text-gray-600 mt-0.5 font-normal">
+              今月追加分
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -130,14 +139,14 @@ export default function FavoritesPage() {
                   className="pl-10"
                 />
               </div>
-              
+
               <Button variant="outline" size="sm">
                 <Filter className="h-4 w-4 mr-2" />
                 フィルター
               </Button>
             </div>
 
-            <div className="flex items-center border rounded-lg p-1">
+            <div className="flex items-center border border-gray-100 rounded-lg p-1">
               <Button
                 variant={viewMode === "grid" ? "default" : "ghost"}
                 size="sm"
@@ -161,7 +170,9 @@ export default function FavoritesPage() {
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-4">
-              <TabsTrigger value="all">すべて ({favoritePrompts.length})</TabsTrigger>
+              <TabsTrigger value="all">
+                すべて ({favoritePrompts.length})
+              </TabsTrigger>
               <TabsTrigger value="recent">
                 <Clock className="h-4 w-4 mr-1" />
                 最近追加
@@ -170,11 +181,13 @@ export default function FavoritesPage() {
             </TabsList>
 
             <TabsContent value={activeTab}>
-              <div className={`grid gap-4 ${
-                viewMode === "grid" 
-                  ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
-                  : "grid-cols-1"
-              }`}>
+              <div
+                className={`grid gap-4 ${
+                  viewMode === "grid"
+                    ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                    : "grid-cols-1"
+                }`}
+              >
                 {favoritePrompts.map((prompt) => (
                   <PromptCard
                     key={prompt.id}
@@ -191,7 +204,9 @@ export default function FavoritesPage() {
               {favoritePrompts.length === 0 && (
                 <div className="text-center py-12">
                   <Heart className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 mb-4">お気に入りプロンプトがまだありません</p>
+                  <p className="text-gray-500 mb-4">
+                    お気に入りプロンプトがまだありません
+                  </p>
                   <p className="text-sm text-gray-400">
                     プロンプトカードのハートアイコンをクリックしてお気に入りに追加してください
                   </p>

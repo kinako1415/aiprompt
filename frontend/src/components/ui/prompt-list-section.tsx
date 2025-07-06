@@ -54,16 +54,16 @@ export function PromptListSection({
   onPromptRun,
   onPromptLike,
   onPromptShare,
-  onFilter
+  onFilter,
 }: PromptListSectionProps) {
   return (
-    <Card className="border border-gray-50">
-      <CardHeader className="pb-4">
+    <Card className="border border-gray-100">
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">プロンプト一覧</CardTitle>
           <div className="flex items-center space-x-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={onFilter || (() => {})}
               className="border-gray-100 hover:bg-gray-50"
@@ -71,10 +71,7 @@ export function PromptListSection({
               <Filter className="h-4 w-4 mr-2" />
               フィルター
             </Button>
-            <ViewModeToggle 
-              value={viewMode} 
-              onChange={onViewModeChange} 
-            />
+            <ViewModeToggle value={viewMode} onChange={onViewModeChange} />
           </div>
         </div>
       </CardHeader>

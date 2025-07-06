@@ -12,13 +12,14 @@ const sharedPrompts = [
     id: "shared-1",
     title: "チーム用API文書作成プロンプト",
     description: "API仕様書を自動生成するためのチーム共有プロンプト",
-    content: "あなたは技術文書作成のエキスパートです。以下のAPIエンドポイント情報を基に、開発者向けの詳細な文書を作成してください。",
+    content:
+      "あなたは技術文書作成のエキスパートです。以下のAPIエンドポイント情報を基に、開発者向けの詳細な文書を作成してください。",
     category: "文章生成",
     tags: ["API", "文書作成", "チーム"],
     author: {
       id: "user1",
       name: "開発チーム",
-      avatar: "/team-avatar.png"
+      avatar: "/team-avatar.png",
     },
     rating: 4.6,
     ratingCount: 12,
@@ -30,19 +31,20 @@ const sharedPrompts = [
     createdAt: "2024-01-10T00:00:00Z",
     updatedAt: "2024-01-15T00:00:00Z",
     sharedWith: ["チーム全体"],
-    permissions: "編集可能"
+    permissions: "編集可能",
   },
   {
     id: "shared-2",
     title: "プロジェクト進捗レポート生成",
     description: "週次・月次のプロジェクト進捗レポートを自動作成",
-    content: "プロジェクトマネージャーとして、以下の情報を基に進捗レポートを作成してください。",
+    content:
+      "プロジェクトマネージャーとして、以下の情報を基に進捗レポートを作成してください。",
     category: "分析・要約",
     tags: ["レポート", "プロジェクト管理", "ビジネス"],
     author: {
       id: "user2",
       name: "PM部門",
-      avatar: "/pm-avatar.png"
+      avatar: "/pm-avatar.png",
     },
     rating: 4.8,
     ratingCount: 8,
@@ -54,14 +56,32 @@ const sharedPrompts = [
     createdAt: "2024-01-08T00:00:00Z",
     updatedAt: "2024-01-12T00:00:00Z",
     sharedWith: ["PM部門", "開発チーム"],
-    permissions: "閲覧のみ"
-  }
+    permissions: "閲覧のみ",
+  },
 ];
 
 const teamMembers = [
-  { id: "1", name: "田中太郎", role: "開発者", avatar: "/avatar1.png", status: "active" as const },
-  { id: "2", name: "佐藤花子", role: "デザイナー", avatar: "/avatar2.png", status: "active" as const },
-  { id: "3", name: "鈴木次郎", role: "PM", avatar: "/avatar3.png", status: "away" as const },
+  {
+    id: "1",
+    name: "田中太郎",
+    role: "開発者",
+    avatar: "/avatar1.png",
+    status: "active" as const,
+  },
+  {
+    id: "2",
+    name: "佐藤花子",
+    role: "デザイナー",
+    avatar: "/avatar2.png",
+    status: "active" as const,
+  },
+  {
+    id: "3",
+    name: "鈴木次郎",
+    role: "PM",
+    avatar: "/avatar3.png",
+    status: "away" as const,
+  },
 ];
 
 export default function SharedPage() {
@@ -90,9 +110,9 @@ export default function SharedPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 space-y-4">
       {/* ページヘッダー */}
-      <SharedPageHeader 
+      <SharedPageHeader
         onInviteMember={handleInviteMember}
         onSharePrompt={handleSharePrompt}
       />
@@ -106,7 +126,7 @@ export default function SharedPage() {
       />
 
       {/* チームメンバー */}
-      <TeamMembersSection 
+      <TeamMembersSection
         members={teamMembers}
         onManagePermissions={handleManagePermissions}
       />

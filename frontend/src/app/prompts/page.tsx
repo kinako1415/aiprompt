@@ -6,17 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { PromptCard } from "@/components/PromptCard";
-import { 
-  Search, 
-  Filter, 
-  Grid3X3, 
-  List, 
-  SortAsc, 
+import {
+  Search,
+  Filter,
+  Grid3X3,
+  List,
+  SortAsc,
   Plus,
   FileText,
   Star,
   Clock,
-  TrendingUp
+  TrendingUp,
 } from "lucide-react";
 
 // サンプルデータ（Dashboard.tsxから移動）
@@ -24,8 +24,10 @@ const samplePrompts = [
   {
     id: "1",
     title: "商品説明文生成プロンプト",
-    description: "ECサイト用の魅力的な商品説明文を生成するためのプロンプトテンプレート",
-    content: "あなたは優秀なコピーライターです。以下の商品情報を基に、魅力的で購買意欲をそそる商品説明文を作成してください。\n\n商品名: {{product_name}}\n価格: {{price}}\n特徴: {{features}}\n\n以下の要素を含めてください：\n- 商品の主要な特徴とメリット\n- ターゲット顧客への訴求ポイント\n- 購入を促す魅力的な表現",
+    description:
+      "ECサイト用の魅力的な商品説明文を生成するためのプロンプトテンプレート",
+    content:
+      "あなたは優秀なコピーライターです。以下の商品情報を基に、魅力的で購買意欲をそそる商品説明文を作成してください。\n\n商品名: {{product_name}}\n価格: {{price}}\n特徴: {{features}}\n\n以下の要素を含めてください：\n- 商品の主要な特徴とメリット\n- ターゲット顧客への訴求ポイント\n- 購入を促す魅力的な表現",
     category: "文章生成",
     tags: ["EC", "コピーライティング", "マーケティング"],
     rating: 4.8,
@@ -38,7 +40,7 @@ const samplePrompts = [
     author: {
       id: "1",
       name: "田中太郎",
-      avatar: ""
+      avatar: "",
     },
     isFavorite: true,
     isPublic: true,
@@ -47,7 +49,8 @@ const samplePrompts = [
     id: "2",
     title: "コードレビュー支援プロンプト",
     description: "コードの品質チェックと改善提案を行うためのプロンプト",
-    content: "あなたは経験豊富なシニアエンジニアです。以下のコードをレビューし、改善点を指摘してください：\n\n```{{language}}\n{{code}}\n```\n\n以下の観点から評価してください：\n- コードの可読性\n- パフォーマンス\n- セキュリティ\n- ベストプラクティス\n- バグの可能性",
+    content:
+      "あなたは経験豊富なシニアエンジニアです。以下のコードをレビューし、改善点を指摘してください：\n\n```{{language}}\n{{code}}\n```\n\n以下の観点から評価してください：\n- コードの可読性\n- パフォーマンス\n- セキュリティ\n- ベストプラクティス\n- バグの可能性",
     category: "コード生成",
     tags: ["コードレビュー", "プログラミング", "エンジニア"],
     rating: 4.5,
@@ -60,7 +63,7 @@ const samplePrompts = [
     author: {
       id: "2",
       name: "佐藤花子",
-      avatar: ""
+      avatar: "",
     },
     isFavorite: false,
     isPublic: false,
@@ -68,8 +71,10 @@ const samplePrompts = [
   {
     id: "3",
     title: "会議議事録要約プロンプト",
-    description: "長い会議の議事録から要点を抽出し、アクションアイテムを整理するプロンプト",
-    content: "以下の会議議事録を分析し、要約してください：\n\n{{meeting_transcript}}\n\n以下の形式で整理してください：\n\n## 会議概要\n- 日時：\n- 参加者：\n- 議題：\n\n## 主要な決定事項\n\n## アクションアイテム\n- [ ] 担当者：期限：内容\n\n## 次回会議予定",
+    description:
+      "長い会議の議事録から要点を抽出し、アクションアイテムを整理するプロンプト",
+    content:
+      "以下の会議議事録を分析し、要約してください：\n\n{{meeting_transcript}}\n\n以下の形式で整理してください：\n\n## 会議概要\n- 日時：\n- 参加者：\n- 議題：\n\n## 主要な決定事項\n\n## アクションアイテム\n- [ ] 担当者：期限：内容\n\n## 次回会議予定",
     category: "分析・要約",
     tags: ["会議", "議事録", "ビジネス"],
     rating: 4.3,
@@ -82,7 +87,7 @@ const samplePrompts = [
     author: {
       id: "3",
       name: "鈴木次郎",
-      avatar: ""
+      avatar: "",
     },
     isFavorite: true,
     isPublic: true,
@@ -91,7 +96,8 @@ const samplePrompts = [
     id: "4",
     title: "SNS投稿文生成プロンプト",
     description: "Twitter/X用の魅力的な投稿文を生成するプロンプト",
-    content: "あなたはソーシャルメディアの専門家です。以下のトピックについて、エンゲージメントの高いSNS投稿文を作成してください：\n\nトピック: {{topic}}\n対象オーディエンス: {{audience}}\n\n要件：\n- 280文字以内\n- 適切なハッシュタグを含める\n- 読者の関心を引く書き出し\n- アクションを促す結び",
+    content:
+      "あなたはソーシャルメディアの専門家です。以下のトピックについて、エンゲージメントの高いSNS投稿文を作成してください：\n\nトピック: {{topic}}\n対象オーディエンス: {{audience}}\n\n要件：\n- 280文字以内\n- 適切なハッシュタグを含める\n- 読者の関心を引く書き出し\n- アクションを促す結び",
     category: "文章生成",
     tags: ["SNS", "マーケティング", "Twitter"],
     rating: 4.1,
@@ -104,7 +110,7 @@ const samplePrompts = [
     author: {
       id: "4",
       name: "山田美咲",
-      avatar: ""
+      avatar: "",
     },
     isFavorite: false,
     isPublic: true,
@@ -176,12 +182,16 @@ export default function PromptsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 space-y-4">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">マイプロンプト</h1>
-          <p className="text-gray-600">あなたが作成・保存したプロンプトを管理できます</p>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            マイプロンプト
+          </h1>
+          <p className="text-gray-600 font-normal">
+            あなたが作成・保存したプロンプトを管理できます
+          </p>
         </div>
         <Button className="flex items-center space-x-2">
           <Plus className="h-4 w-4" />
@@ -194,15 +204,23 @@ export default function PromptsPage() {
         {stats.map((stat, index) => (
           <Card key={index}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                {stat.title}
+              </CardTitle>
               <stat.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stat.value}</div>
               <p className="text-xs text-muted-foreground">
-                <span className={`${stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
+                <span
+                  className={`${
+                    stat.changeType === "positive"
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
                   {stat.change}
-                </span>{' '}
+                </span>{" "}
                 from last month
               </p>
             </CardContent>
@@ -267,11 +285,13 @@ export default function PromptsPage() {
           </Tabs>
         </CardHeader>
         <CardContent>
-          <div className={`grid gap-4 ${
-            viewMode === "grid" 
-              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
-              : "grid-cols-1"
-          }`}>
+          <div
+            className={`grid gap-4 ${
+              viewMode === "grid"
+                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                : "grid-cols-1"
+            }`}
+          >
             {samplePrompts.map((prompt) => (
               <PromptCard
                 key={prompt.id}
