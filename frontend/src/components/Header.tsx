@@ -49,14 +49,14 @@ export function Header({ onSidebarToggle, onCreatePrompt }: HeaderProps) {
   const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4">
+    <header className="h-16 bg-white border-b border-gray-50 flex items-center justify-between px-6">
       {/* Left Section */}
       <div className="flex items-center space-x-4">
         <Button
           variant="ghost"
           size="sm"
           onClick={onSidebarToggle}
-          className="p-2"
+          className="p-2 hover:bg-gray-100"
         >
           <Menu className="h-4 w-4" />
         </Button>
@@ -71,7 +71,7 @@ export function Header({ onSidebarToggle, onCreatePrompt }: HeaderProps) {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setShowSearchSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
-              className="pl-10 pr-4"
+              className="pl-10 pr-12 border-gray-50 focus:border-gray-100 focus:ring-1 focus:ring-gray-100"
             />
             <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
               <Command className="h-3 w-3" />
@@ -81,7 +81,7 @@ export function Header({ onSidebarToggle, onCreatePrompt }: HeaderProps) {
           
           {/* Search Suggestions */}
           {showSearchSuggestions && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-md shadow-lg z-50">
               <div className="p-2">
                 <div className="text-xs text-gray-500 mb-2">最近の検索</div>
                 {searchSuggestions.map((suggestion, index) => (
@@ -89,7 +89,7 @@ export function Header({ onSidebarToggle, onCreatePrompt }: HeaderProps) {
                     key={index}
                     variant="ghost"
                     size="sm"
-                    className="w-full justify-start p-2 h-auto"
+                    className="w-full justify-start p-2 h-auto hover:bg-gray-50"
                     onClick={() => {
                       setSearchQuery(suggestion);
                       setShowSearchSuggestions(false);
@@ -108,7 +108,7 @@ export function Header({ onSidebarToggle, onCreatePrompt }: HeaderProps) {
       {/* Right Section */}
       <div className="flex items-center space-x-3">
         {/* Create Button */}
-        <Button onClick={onCreatePrompt} className="flex items-center space-x-2">
+        <Button onClick={onCreatePrompt} className="flex items-center space-x-2 bg-gray-900 hover:bg-gray-800 text-white">
           <Plus className="h-4 w-4" />
           <span>新規作成</span>
         </Button>
@@ -116,10 +116,10 @@ export function Header({ onSidebarToggle, onCreatePrompt }: HeaderProps) {
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="relative p-2">
+            <Button variant="ghost" size="sm" className="relative p-2 hover:bg-gray-100">
               <Bell className="h-4 w-4" />
               {unreadCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs bg-red-500">
                   {unreadCount}
                 </Badge>
               )}
@@ -150,7 +150,7 @@ export function Header({ onSidebarToggle, onCreatePrompt }: HeaderProps) {
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="p-1">
+            <Button variant="ghost" size="sm" className="p-1 hover:bg-gray-100">
               <Avatar className="h-8 w-8">
                 <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
                 <AvatarFallback>

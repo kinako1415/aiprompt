@@ -55,12 +55,12 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
 
   return (
     <div
-      className={`h-full bg-white border-r border-gray-200 flex flex-col ${
+      className={`h-full bg-white border-r border-gray-50 flex flex-col ${
         isCollapsed ? "w-16" : "w-64"
       } transition-all duration-300`}
     >
       {/* Header */}
-      <div className="p-4 border-b border-gray-200">
+      <div className="p-4 border-b border-gray-100/50">
         {!isCollapsed && (
           <h1 className="text-xl font-bold text-gray-900">PromptHub</h1>
         )}
@@ -77,6 +77,10 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
                 size="sm"
                 className={`w-full justify-start ${
                   isCollapsed ? "px-2" : "px-3"
+                } ${
+                  pathname === item.href 
+                    ? "bg-gray-900 text-white hover:bg-gray-800" 
+                    : "hover:bg-gray-100 text-gray-700"
                 }`}
                 onClick={() => handleNavigation(item.href)}
               >
@@ -85,7 +89,7 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
                   <>
                     <span className="flex-1 text-left">{item.label}</span>
                     {item.badge && (
-                      <Badge variant="secondary" className="ml-auto">
+                      <Badge variant="secondary" className="ml-auto bg-gray-100 text-gray-600 hover:bg-gray-200">
                         {item.badge}
                       </Badge>
                     )}
@@ -98,14 +102,14 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
 
         {/* Filters Section */}
         {!isCollapsed && (
-          <div className="p-2 border-t border-gray-100 mt-4">
+          <div className="p-2 border-t border-gray-100/50 mt-4">
             <div className="space-y-4">
               {/* Categories */}
               <div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="w-full justify-start p-2"
+                  className="w-full justify-start p-2 text-gray-700 hover:bg-gray-100"
                   onClick={() => setShowCategories(!showCategories)}
                 >
                   <Filter className="h-4 w-4 mr-2" />
@@ -123,7 +127,7 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
                         key={category.name}
                         variant="ghost"
                         size="sm"
-                        className="w-full justify-start p-2 h-auto"
+                        className="w-full justify-start p-2 h-auto text-gray-600 hover:bg-gray-50"
                       >
                         <div
                           className={`w-2 h-2 rounded-full ${category.color} mr-2`}
@@ -131,7 +135,7 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
                         <span className="flex-1 text-left text-sm">
                           {category.name}
                         </span>
-                        <Badge variant="outline" className="ml-auto text-xs">
+                        <Badge variant="outline" className="ml-auto text-xs border-gray-300 text-gray-500">
                           {category.count}
                         </Badge>
                       </Button>
@@ -145,7 +149,7 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="w-full justify-start p-2"
+                  className="w-full justify-start p-2 text-gray-700 hover:bg-gray-100"
                   onClick={() => setShowTags(!showTags)}
                 >
                   <Tag className="h-4 w-4 mr-2" />
@@ -164,7 +168,7 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
                           key={tag}
                           variant="ghost"
                           size="sm"
-                          className="w-full justify-start p-2 h-auto"
+                          className="w-full justify-start p-2 h-auto text-gray-600 hover:bg-gray-50"
                         >
                           <span className="text-sm">{tag}</span>
                         </Button>
@@ -179,7 +183,7 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="w-full justify-start p-2"
+                  className="w-full justify-start p-2 text-gray-700 hover:bg-gray-100"
                 >
                   <Calendar className="h-4 w-4 mr-2" />
                   <span className="flex-1 text-left">作成日</span>

@@ -163,7 +163,7 @@ export function Dashboard({ onCreatePrompt }: DashboardProps) {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-8 space-y-8 max-w-7xl mx-auto">
       {/* Stats Cards */}
       <DashboardStats stats={dashboardStats} />
 

@@ -36,20 +36,18 @@ export function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="h-screen flex flex-col">
       {/* ヘッダー */}
-      <Header 
+      <Header
         onSidebarToggle={handleSidebarToggle}
         onCreatePrompt={handleCreatePrompt}
       />
-      
+
       {/* メインコンテンツエリア */}
       <div className="flex-1 flex overflow-hidden">
         {/* サイドバー */}
         <Sidebar isCollapsed={isSidebarCollapsed} />
-        
+
         {/* メインコンテンツ */}
-        <main className="flex-1 overflow-y-auto bg-gray-50">
-          {children}
-        </main>
+        <main className="flex-1 overflow-y-auto bg-gray-50">{children}</main>
       </div>
 
       {/* プロンプトエディター */}

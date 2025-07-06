@@ -42,12 +42,12 @@ export function StatsCard({
   };
 
   return (
-    <Card>
-      <CardContent className="p-4">
+    <Card className="border border-gray-50 hover:shadow-sm transition-shadow">
+      <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <p className="text-sm text-gray-600 mb-1">{title}</p>
-            <p className="text-2xl font-bold text-gray-900 mb-1">{value}</p>
+            <p className="text-sm text-gray-500 mb-2">{title}</p>
+            <p className="text-3xl font-bold text-gray-900 mb-2">{value}</p>
             {change && (
               <p className={`text-sm flex items-center ${getChangeColor()}`}>
                 {getTrendIcon()}
@@ -59,8 +59,8 @@ export function StatsCard({
             )}
           </div>
           {icon && (
-            <div className="p-2 bg-blue-50 rounded-lg">
-              <div className="text-blue-600">
+            <div className="p-3 bg-gray-50 rounded-lg">
+              <div className="text-gray-600">
                 {icon}
               </div>
             </div>

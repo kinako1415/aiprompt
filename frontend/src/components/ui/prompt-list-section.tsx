@@ -57,15 +57,16 @@ export function PromptListSection({
   onFilter
 }: PromptListSectionProps) {
   return (
-    <Card>
-      <CardHeader>
+    <Card className="border border-gray-50">
+      <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle>プロンプト一覧</CardTitle>
+          <CardTitle className="text-lg">プロンプト一覧</CardTitle>
           <div className="flex items-center space-x-2">
             <Button 
               variant="outline" 
               size="sm"
               onClick={onFilter || (() => {})}
+              className="border-gray-100 hover:bg-gray-50"
             >
               <Filter className="h-4 w-4 mr-2" />
               フィルター
@@ -77,7 +78,7 @@ export function PromptListSection({
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-0">
         <PromptListTabs
           prompts={prompts}
           activeTab={activeTab}
