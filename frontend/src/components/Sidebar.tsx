@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { Badge } from "./ui/badge";
@@ -23,11 +24,11 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { icon: Home, label: "ダッシュボード", href: "/", badge: null },
-  { icon: FileText, label: "マイプロンプト", href: "/prompts", badge: 243 },
+  { icon: Home, label: "ダッシュボード", href: "/dashboard", badge: null },
+  { icon: FileText, label: "マイプロンプト", href: "/my-prompts", badge: 243 },
   { icon: Star, label: "お気に入り", href: "/favorites", badge: 12 },
   { icon: Puzzle, label: "テンプレート", href: "/templates", badge: 8 },
-  { icon: Users, label: "共有・チーム", href: "/sharing", badge: 3 },
+  { icon: Users, label: "共有・チーム", href: "/shared", badge: 3 },
   { icon: Trophy, label: "コミュニティ", href: "/community", badge: null },
   { icon: BarChart3, label: "統計・分析", href: "/analytics", badge: null },
   { icon: Settings, label: "設定", href: "/settings", badge: null },
@@ -43,9 +44,14 @@ const filterCategories = [
 ];
 
 export function Sidebar({ isCollapsed }: SidebarProps) {
-  const [activeItem, setActiveItem] = useState("ダッシュボード");
+  const router = useRouter();
+  const pathname = usePathname();
   const [showCategories, setShowCategories] = useState(true);
   const [showTags, setShowTags] = useState(true);
+
+  const handleNavigation = (href: string) => {
+    router.push(href);
+  };
 
   return (
     <div
@@ -67,12 +73,12 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
             {menuItems.map((item) => (
               <Button
                 key={item.label}
-                variant={activeItem === item.label ? "default" : "ghost"}
+                variant={pathname === item.href ? "default" : "ghost"}
                 size="sm"
                 className={`w-full justify-start ${
                   isCollapsed ? "px-2" : "px-3"
                 }`}
-                onClick={() => setActiveItem(item.label)}
+                onClick={() => handleNavigation(item.href)}
               >
                 <item.icon className="h-4 w-4 mr-2" />
                 {!isCollapsed && (
