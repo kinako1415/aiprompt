@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
@@ -25,12 +26,16 @@ import {
 
 interface HeaderProps {
   onSidebarToggle: () => void;
-  onCreatePrompt: () => void;
 }
 
-export function Header({ onSidebarToggle, onCreatePrompt }: HeaderProps) {
+export function Header({ onSidebarToggle }: HeaderProps) {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
+
+  const handleCreatePrompt = () => {
+    router.push("/prompts/new");
+  };
 
   const searchSuggestions = [
     "ChatGPT プロンプト",
@@ -129,7 +134,7 @@ export function Header({ onSidebarToggle, onCreatePrompt }: HeaderProps) {
       <div className="flex items-center space-x-2">
         {/* Create Button */}
         <Button
-          onClick={onCreatePrompt}
+          onClick={handleCreatePrompt}
           className="flex items-center space-x-2 bg-gray-900 hover:bg-gray-800 text-white font-medium"
         >
           <Plus className="h-4 w-4" />

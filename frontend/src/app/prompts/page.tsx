@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -149,9 +150,14 @@ const stats = [
 ];
 
 export default function PromptsPage() {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const handleNewPrompt = () => {
+    router.push("/prompts/new");
+  };
 
   const handlePromptEdit = (id: string) => {
     console.log("Edit prompt:", id);
@@ -193,7 +199,10 @@ export default function PromptsPage() {
             あなたが作成・保存したプロンプトを管理できます
           </p>
         </div>
-        <Button className="flex items-center space-x-2">
+        <Button
+          className="flex items-center space-x-2"
+          onClick={handleNewPrompt}
+        >
           <Plus className="h-4 w-4" />
           <span>新規作成</span>
         </Button>

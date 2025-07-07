@@ -1,12 +1,9 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { DashboardStats } from "./ui/dashboard-stats";
 import { QuickActionsSection } from "./ui/quick-actions-section";
 import { PromptListSection } from "./ui/prompt-list-section";
 import { TrendingUp, FileText, Star, Eye } from "lucide-react";
-
-interface DashboardProps {
-  onCreatePrompt: () => void;
-}
 
 // Sample data
 const dashboardStats = [
@@ -133,9 +130,14 @@ const samplePrompts = [
   },
 ];
 
-export function Dashboard({ onCreatePrompt }: DashboardProps) {
+export function Dashboard() {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [activeTab, setActiveTab] = useState("all");
+
+  const handleCreatePrompt = () => {
+    router.push("/prompts/new");
+  };
 
   const handlePromptEdit = (id: string) => {
     console.log("Edit prompt:", id);
@@ -163,7 +165,7 @@ export function Dashboard({ onCreatePrompt }: DashboardProps) {
       <DashboardStats stats={dashboardStats} />
 
       {/* Quick Actions */}
-      <QuickActionsSection onCreatePrompt={onCreatePrompt} />
+      <QuickActionsSection onCreatePrompt={handleCreatePrompt} />
 
       {/* Prompts Section */}
       <PromptListSection

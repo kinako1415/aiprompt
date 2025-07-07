@@ -1,11 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QuickActionButton } from "@/components/ui/quick-action-button";
 import { Plus, FileText, Upload, Sparkles } from "lucide-react";
 
 interface QuickActionsSectionProps {
-  onCreatePrompt: () => void;
+  onCreatePrompt?: () => void;
   onCreateFromTemplate?: () => void;
   onImport?: () => void;
   onAiAssistant?: () => void;
@@ -17,6 +18,15 @@ export function QuickActionsSection({
   onImport,
   onAiAssistant,
 }: QuickActionsSectionProps) {
+  const router = useRouter();
+
+  const handleCreatePrompt = () => {
+    if (onCreatePrompt) {
+      onCreatePrompt();
+    } else {
+      router.push("/prompts/new");
+    }
+  };
   return (
     <Card className="border border-gray-100">
       <CardHeader className="pb-3">
@@ -30,7 +40,7 @@ export function QuickActionsSection({
           <QuickActionButton
             icon={<Plus className="h-6 w-6" />}
             label="新規プロンプト作成"
-            onClick={onCreatePrompt}
+            onClick={handleCreatePrompt}
             className="bg-gray-900 hover:bg-gray-800 text-white border-gray-900"
           />
           <QuickActionButton
