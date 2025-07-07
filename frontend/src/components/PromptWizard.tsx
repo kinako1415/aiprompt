@@ -219,8 +219,11 @@ export function PromptWizard({ onComplete, onCancel }: PromptWizardProps) {
     markStepCompleted(4);
     setCurrentStep(5);
   };  // ステップ5: フィードバック完了
-  const handleFeedbackComplete = () => {
+  const handleFeedbackComplete = (feedback: Feedback) => {
     markStepCompleted(5);
+    
+    // フィードバックをテンプレートに統合する（必要に応じて）
+    console.log('収集されたフィードバック:', feedback);
     
     // 最終的なテンプレートを返す
     if (builtTemplate && onComplete) {
@@ -271,9 +274,10 @@ export function PromptWizard({ onComplete, onCancel }: PromptWizardProps) {
           />
         ) : null;
       case 5:
-        return executionResults.length > 0 ? (
+        return executionResults.length > 0 && builtTemplate ? (
           <FeedbackCollection
             results={executionResults}
+            template={builtTemplate}
             onComplete={handleFeedbackComplete}
             onBack={handleBack}
           />
