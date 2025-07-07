@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -7,13 +7,14 @@ import { Textarea } from "./ui/textarea";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { ScrollArea } from "./ui/scroll-area";
-import { Separator } from "./ui/separator";
+import { StructuredPromptEditor } from "./StructuredPromptEditor";
+import { AdvancedTextEditor } from "./AdvancedTextEditor";
+import { LivePreviewPanel } from "./LivePreviewPanel";
+import { VersionHistory } from "./VersionHistory";
 import {
   Save,
   Play,
   Sparkles,
-  Eye,
   Lightbulb,
   Layers,
   X,
@@ -21,6 +22,7 @@ import {
   AlertCircle,
   CheckCircle,
   Zap,
+  Clock,
 } from "lucide-react";
 
 interface PromptEditorProps {
@@ -61,7 +63,7 @@ const aiSuggestions = [
       "プロンプトに具体的な出力形式を指定すると、より一貫した結果が得られます。",
     suggestion:
       "以下の形式で出力してください：\n\n## タイトル\n内容...\n\n## 要約\n- ポイント1\n- ポイント2",
-    impact: "high",
+    impact: "high" as const,
   },
   {
     type: "structure",
@@ -70,7 +72,7 @@ const aiSuggestions = [
       "AIに特定の役割を与えることで、より専門的な回答が期待できます。",
     suggestion:
       "あなたは経験豊富な{{職種}}です。{{専門知識}}を活用して回答してください。",
-    impact: "medium",
+    impact: "medium" as const,
   },
   {
     type: "example",
@@ -78,7 +80,7 @@ const aiSuggestions = [
     description: "具体例を示すことで、期待する出力の品質が向上します。",
     suggestion:
       "例：\n入力: {{例1}}\n出力: {{例1の出力}}\n\n入力: {{例2}}\n出力: {{例2の出力}}",
-    impact: "medium",
+    impact: "medium" as const,
   },
 ];
 
@@ -128,6 +130,61 @@ export function PromptEditor({
   const [tags, setTags] = useState<string[]>(prompt?.tags || []);
   const [newTag, setNewTag] = useState("");
   const [activeTab, setActiveTab] = useState("editor");
+  const [showPreview, setShowPreview] = useState(false);
+
+  // 自動保存機能の状態
+  const [isDirty, setIsDirty] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
+
+  // 自動保存機能（3秒間隔でデバウンス）
+  const autoSave = useCallback(
+    (data: {
+      title: string;
+      description: string;
+      content: string;
+      category: string;
+      tags: string[];
+    }) => {
+      if (autoSaveEnabled && isDirty) {
+        // 実際のAPI呼び出しはここで行う
+        console.log("Auto-saving draft...", data);
+        setLastSaved(new Date());
+        setIsDirty(false);
+      }
+    },
+    [autoSaveEnabled, isDirty]
+  );
+
+  // デバウンスされた自動保存
+  const debouncedAutoSave = useCallback(
+    (data: {
+      title: string;
+      description: string;
+      content: string;
+      category: string;
+      tags: string[];
+    }) => {
+      const timeoutId = setTimeout(() => autoSave(data), 3000);
+      return () => clearTimeout(timeoutId);
+    },
+    [autoSave]
+  );
+
+  // フォームデータの変更を監視
+  useEffect(() => {
+    if (title || description || content || category || tags.length > 0) {
+      setIsDirty(true);
+      const cleanup = debouncedAutoSave({
+        title,
+        description,
+        content,
+        category,
+        tags,
+      });
+      return cleanup;
+    }
+  }, [title, description, content, category, tags, debouncedAutoSave]);
 
   const handleSave = () => {
     const promptData = {
@@ -159,151 +216,190 @@ export function PromptEditor({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
-        <DialogHeader>
-          <DialogTitle className="flex items-center space-x-2">
-            <Sparkles className="h-5 w-5" />
-            <span>{prompt ? "プロンプト編集" : "新規プロンプト作成"}</span>
+      <DialogContent className="max-w-none max-h-none w-screen h-screen flex flex-col p-0 overflow-hidden m-0">
+        <DialogHeader className="px-6 py-4 border-b border-gray-200 flex-shrink-0">
+          <DialogTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Sparkles className="h-5 w-5" />
+              <span>{prompt ? "プロンプト編集" : "新規プロンプト作成"}</span>
+              {isDirty && (
+                <Badge variant="outline" className="text-orange-600">
+                  未保存
+                </Badge>
+              )}
+            </div>
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              {lastSaved && (
+                <div className="flex items-center space-x-1">
+                  <Clock className="h-3 w-3" />
+                  <span>最終保存: {lastSaved.toLocaleTimeString()}</span>
+                </div>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowPreview(!showPreview)}
+              >
+                プレビュー: {showPreview ? "ON" : "OFF"}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setAutoSaveEnabled(!autoSaveEnabled)}
+              >
+                自動保存: {autoSaveEnabled ? "ON" : "OFF"}
+              </Button>
+            </div>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-hidden">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="h-full flex flex-col"
-          >
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="editor">エディタ</TabsTrigger>
-              <TabsTrigger value="suggestions">AI提案</TabsTrigger>
-              <TabsTrigger value="elements">要素分解</TabsTrigger>
-              <TabsTrigger value="preview">プレビュー</TabsTrigger>
-            </TabsList>
+        {/* 新しい分割レイアウト */}
+        <div className="flex-1 overflow-hidden flex min-h-0">
+          {/* 左パネル: エディター */}
+          <div className="flex-1 flex flex-col min-w-0">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="h-full flex flex-col"
+            >
+              <TabsList className="grid w-full grid-cols-5 mx-6 mt-4 flex-shrink-0">
+                <TabsTrigger value="structured">構造化編集</TabsTrigger>
+                <TabsTrigger value="editor">テキスト編集</TabsTrigger>
+                <TabsTrigger value="suggestions">AI提案</TabsTrigger>
+                <TabsTrigger value="elements">要素分解</TabsTrigger>
+                <TabsTrigger value="versions">バージョン</TabsTrigger>
+              </TabsList>
 
-            <div className="flex-1 overflow-hidden">
-              <TabsContent value="editor" className="h-full">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
-                  {/* Left Panel - Basic Info */}
-                  <div className="space-y-4">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">基本情報</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div>
-                          <Label htmlFor="title">タイトル</Label>
-                          <Input
-                            id="title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            placeholder="プロンプトのタイトルを入力"
-                          />
-                        </div>
+              <div className="flex-1 overflow-hidden px-6 pb-4">
+                {/* 構造化編集タブ */}
+                <TabsContent
+                  value="structured"
+                  className="h-full mt-0 overflow-y-auto"
+                >
+                  <StructuredPromptEditor
+                    content={content}
+                    onChange={setContent}
+                    elements={promptElements}
+                  />
+                </TabsContent>
 
-                        <div>
-                          <Label htmlFor="description">説明</Label>
-                          <Textarea
-                            id="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="プロンプトの用途や概要を説明"
-                            rows={3}
-                          />
-                        </div>
-
-                        <div>
-                          <Label htmlFor="category">カテゴリー</Label>
-                          <select
-                            id="category"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded-md"
-                          >
-                            <option value="">カテゴリーを選択</option>
-                            {categories.map((cat) => (
-                              <option key={cat} value={cat}>
-                                {cat}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div>
-                          <Label>タグ</Label>
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            {tags.map((tag) => (
-                              <Badge
-                                key={tag}
-                                variant="secondary"
-                                className="flex items-center space-x-1"
-                              >
-                                <span>{tag}</span>
-                                <button
-                                  onClick={() => handleRemoveTag(tag)}
-                                  className="ml-1 hover:text-red-500"
-                                >
-                                  <X className="h-3 w-3" />
-                                </button>
-                              </Badge>
-                            ))}
-                          </div>
-                          <div className="flex space-x-2">
-                            <Input
-                              value={newTag}
-                              onChange={(e) => setNewTag(e.target.value)}
-                              placeholder="新しいタグを追加"
-                              onKeyPress={(e) => {
-                                if (e.key === "Enter") {
-                                  e.preventDefault();
-                                  handleAddTag();
-                                }
-                              }}
-                            />
-                            <Button
-                              type="button"
-                              onClick={handleAddTag}
-                              size="sm"
-                            >
-                              <Plus className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  {/* Right Panel - Content */}
-                  <div className="space-y-4">
-                    <Card className="h-full">
-                      <CardHeader>
-                        <CardTitle className="text-lg">
-                          プロンプト内容
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <Textarea
-                          value={content}
-                          onChange={(e) => setContent(e.target.value)}
-                          placeholder="プロンプトの内容を入力してください..."
-                          rows={15}
-                          className="resize-none"
+                {/* 従来のテキスト編集 */}
+                <TabsContent
+                  value="editor"
+                  className="h-full mt-0 overflow-y-auto"
+                >
+                  <div className="flex flex-col gap-4 h-full py-4">
+                    {/* 上部：基本情報（横並び、幅広） */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 pb-4 border-b border-gray-200">
+                      <div className="md:col-span-2">
+                        <Label htmlFor="title" className="text-sm font-medium">
+                          タイトル
+                        </Label>
+                        <Input
+                          id="title"
+                          value={title}
+                          onChange={(e) => setTitle(e.target.value)}
+                          placeholder="プロンプトのタイトルを入力"
+                          className="mt-1"
                         />
-                        <div className="flex justify-between items-center mt-2 text-sm text-gray-500">
-                          <span>{content.length} 文字</span>
-                          <span>
-                            変数: &#123;&#123;variable_name&#125;&#125;
-                            形式で使用
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-              </TabsContent>
+                      </div>
 
-              <TabsContent value="suggestions" className="h-full">
-                <ScrollArea className="h-full">
-                  <div className="space-y-4">
+                      <div>
+                        <Label
+                          htmlFor="category"
+                          className="text-sm font-medium"
+                        >
+                          カテゴリー
+                        </Label>
+                        <select
+                          id="category"
+                          value={category}
+                          onChange={(e) => setCategory(e.target.value)}
+                          className="mt-1 w-full p-2 border border-gray-200 rounded-md"
+                        >
+                          <option value="">カテゴリーを選択</option>
+                          {categories.map((cat) => (
+                            <option key={cat} value={cat}>
+                              {cat}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="md:col-span-3">
+                        <Label
+                          htmlFor="description"
+                          className="text-sm font-medium"
+                        >
+                          説明
+                        </Label>
+                        <Textarea
+                          id="description"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          placeholder="プロンプトの用途や概要を説明"
+                          rows={2}
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+
+                    {/* タグ部分（横並び、コンパクト） */}
+                    <div className="pb-4 border-b border-gray-200">
+                      <Label className="text-sm font-medium mb-2 block">
+                        タグ
+                      </Label>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {tags.map((tag) => (
+                          <Badge
+                            key={tag}
+                            variant="secondary"
+                            className="flex items-center space-x-1"
+                          >
+                            <span>{tag}</span>
+                            <button
+                              onClick={() => handleRemoveTag(tag)}
+                              className="ml-1 hover:text-red-500"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="flex space-x-2 max-w-sm">
+                        <Input
+                          value={newTag}
+                          onChange={(e) => setNewTag(e.target.value)}
+                          placeholder="新しいタグを追加"
+                          onKeyPress={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              handleAddTag();
+                            }
+                          }}
+                        />
+                        <Button type="button" onClick={handleAddTag} size="sm">
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* メインエディター（全領域を使用） */}
+                    <div className="flex-1 min-h-0">
+                      <AdvancedTextEditor
+                        content={content}
+                        onChange={setContent}
+                        placeholder="プロンプトの内容を入力してください..."
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent
+                  value="suggestions"
+                  className="h-full mt-0 overflow-y-auto"
+                >
+                  <div className="space-y-4 p-4">
                     <div className="flex items-center space-x-2 mb-4">
                       <Lightbulb className="h-5 w-5 text-yellow-500" />
                       <h3 className="text-lg font-semibold">AI改善提案</h3>
@@ -372,12 +468,13 @@ export function PromptEditor({
                       </Card>
                     ))}
                   </div>
-                </ScrollArea>
-              </TabsContent>
+                </TabsContent>
 
-              <TabsContent value="elements" className="h-full">
-                <ScrollArea className="h-full">
-                  <div className="space-y-4">
+                <TabsContent
+                  value="elements"
+                  className="h-full mt-0 overflow-y-auto"
+                >
+                  <div className="space-y-4 p-4">
                     <div className="flex items-center space-x-2 mb-4">
                       <Layers className="h-5 w-5 text-blue-500" />
                       <h3 className="text-lg font-semibold">
@@ -408,67 +505,39 @@ export function PromptEditor({
                       </Card>
                     ))}
                   </div>
-                </ScrollArea>
-              </TabsContent>
+                </TabsContent>
 
-              <TabsContent value="preview" className="h-full">
-                <div className="h-full">
-                  <div className="flex items-center space-x-2 mb-4">
-                    <Eye className="h-5 w-5 text-green-500" />
-                    <h3 className="text-lg font-semibold">プレビュー</h3>
+                <TabsContent value="versions" className="h-full mt-0">
+                  <div className="p-4 h-full">
+                    <VersionHistory
+                      promptId={prompt?.id || "new"}
+                      onRestore={(version) => {
+                        setContent(version.content);
+                        // その他の復元処理
+                      }}
+                    />
                   </div>
+                </TabsContent>
+              </div>
+            </Tabs>
+          </div>
 
-                  <Card className="h-full">
-                    <CardHeader>
-                      <CardTitle className="flex items-center justify-between">
-                        <span>{title || "プロンプトタイトル"}</span>
-                        <Badge variant="outline">
-                          {category || "カテゴリー未設定"}
-                        </Badge>
-                      </CardTitle>
-                      <div className="flex flex-wrap gap-2">
-                        {tags.map((tag) => (
-                          <Badge key={tag} variant="secondary">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div>
-                          <Label className="text-sm font-medium text-gray-700">
-                            説明
-                          </Label>
-                          <p className="text-sm text-gray-600">
-                            {description ||
-                              "プロンプトの説明がここに表示されます"}
-                          </p>
-                        </div>
-
-                        <Separator />
-
-                        <div>
-                          <Label className="text-sm font-medium text-gray-700">
-                            プロンプト内容
-                          </Label>
-                          <div className="bg-gray-50 p-4 rounded-md mt-2">
-                            <pre className="text-sm whitespace-pre-wrap">
-                              {content ||
-                                "プロンプトの内容がここに表示されます"}
-                            </pre>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabsContent>
+          {/* 右パネル: プレビュー（条件付き表示） */}
+          {showPreview && (
+            <div className="w-80 border-l border-gray-200 flex flex-col bg-white">
+              <LivePreviewPanel
+                title={title}
+                description={description}
+                content={content}
+                category={category}
+                tags={tags}
+              />
             </div>
-          </Tabs>
+          )}
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t">
+        {/* フッター */}
+        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 flex-shrink-0">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             キャンセル
           </Button>
