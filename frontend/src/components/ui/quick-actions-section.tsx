@@ -27,6 +27,10 @@ export function QuickActionsSection({
       router.push("/prompts/new");
     }
   };
+
+  const handleAiWizard = () => {
+    router.push("/prompts/ai-wizard");
+  };
   return (
     <Card className="border border-gray-100">
       <CardHeader className="pb-3">
@@ -36,12 +40,18 @@ export function QuickActionsSection({
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
           <QuickActionButton
             icon={<Plus className="h-6 w-6" />}
             label="新規プロンプト作成"
             onClick={handleCreatePrompt}
             className="bg-gray-900 hover:bg-gray-800 text-white border-gray-900"
+          />
+          <QuickActionButton
+            icon={<Sparkles className="h-6 w-6" />}
+            label="AI支援で作成"
+            onClick={handleAiWizard}
+            className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
           />
           <QuickActionButton
             icon={<FileText className="h-6 w-6" />}

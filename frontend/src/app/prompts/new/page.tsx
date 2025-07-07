@@ -15,6 +15,7 @@ import { StructuredPromptEditor } from "@/components/StructuredPromptEditor";
 import { AdvancedTextEditor } from "@/components/AdvancedTextEditor";
 import { LivePreviewPanel } from "@/components/LivePreviewPanel";
 import { VersionHistory } from "@/components/VersionHistory";
+import { PromptWizard } from "@/components/PromptWizard";
 import {
   Save,
   Sparkles,
@@ -31,6 +32,8 @@ import {
   Settings,
   Eye,
   RotateCcw,
+  Wand2,
+  Edit,
 } from "lucide-react";
 
 const categories = [
@@ -41,6 +44,18 @@ const categories = [
   "翻訳",
   "アイデア出し",
 ];
+
+// AI支援フローで作成されるプロンプトテンプレートの型
+interface PromptTemplate {
+  name: string;
+  description?: string;
+  content: string;
+  metadata?: {
+    category?: string;
+    tags?: string[];
+    [key: string]: string | string[] | number | boolean | undefined;
+  };
+}
 
 const aiSuggestions = [
   {
@@ -132,6 +147,9 @@ const guideSteps = [
 export default function NewPromptPage() {
   const router = useRouter();
 
+  // 作成方法の選択状態（追加）
+  const [creationMode, setCreationMode] = useState<"select" | "manual" | "ai">("select");
+
   // フォームの状態管理
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -146,6 +164,7 @@ export default function NewPromptPage() {
   const [isGuideMode, setIsGuideMode] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const [focusMode, setFocusMode] = useState(false);
+  const [aiHandoffSuccessful, setAiHandoffSuccessful] = useState(false);
 
   // 自動保存機能の状態
   const [isDirty, setIsDirty] = useState(false);
@@ -300,6 +319,207 @@ export default function NewPromptPage() {
     return "upcoming";
   };
 
+  // AI支援フロー完了時のハンドラー
+  const handleAIWizardComplete = (template: PromptTemplate) => {
+    console.log('AI支援フローで作成されたプロンプト:', template);
+    // 作成されたプロンプトを手動編集モードに引き継ぎ
+    setTitle(template.name || '');
+    setDescription(template.description || '');
+    setContent(template.content || '');
+    setCategory(template.metadata?.category || '');
+    // タグがある場合は設定
+    if (template.metadata?.tags && Array.isArray(template.metadata.tags)) {
+      setTags(template.metadata.tags);
+    }
+    setCreationMode('manual');
+    setCurrentStep(2); // プロンプト編集ステップに移動
+    setAiHandoffSuccessful(true);
+    // 3秒後に成功表示を消す
+    setTimeout(() => setAiHandoffSuccessful(false), 3000);
+  };
+
+  const handleAIWizardCancel = () => {
+    setCreationMode('select');
+  };
+
+  // 手動モードからAI支援モードに切り替える時の確認
+  const handleSwitchToAI = () => {
+    if (isDirty) {
+      const confirmed = window.confirm(
+        "現在の入力内容が失われます。AI支援モードに切り替えますか？"
+      );
+      if (!confirmed) return;
+    }
+    setCreationMode('ai');
+  };
+
+  // 作成方法選択画面の表示判定
+  if (creationMode === "select") {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* ヘッダー */}
+        <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center space-x-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCancel}
+                  className="flex items-center space-x-2"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span>戻る</span>
+                </Button>
+                <Separator orientation="vertical" className="h-6" />
+                <div className="flex items-center space-x-2">
+                  <Sparkles className="h-5 w-5 text-blue-600" />
+                  <h1 className="text-lg font-semibold text-gray-900">
+                    新規プロンプト作成
+                  </h1>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 作成方法選択画面 */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              プロンプトの作成方法を選択してください
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              AI支援で簡単に作成するか、手動で詳細に作成するかを選択できます。
+              どちらを選んでも、後から編集や調整が可能です。
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* AI支援作成 */}
+            <Card 
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-500 hover:scale-105"
+              onClick={() => setCreationMode("ai")}
+            >
+              <CardContent className="p-8">
+                <div className="text-center space-y-6">
+                  <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center">
+                    <Wand2 className="h-10 w-10 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                      AI支援で作成
+                    </h3>
+                    <Badge className="bg-blue-100 text-blue-800 mb-4">
+                      推奨・初心者向け
+                    </Badge>
+                    <p className="text-gray-600 leading-relaxed">
+                      目的や要件を対話形式で入力するだけで、AIがベストプラクティスに基づいた効果的なプロンプトを自動生成します
+                    </p>
+                  </div>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-center justify-center space-x-2 text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      <span>初心者でも簡単に高品質なプロンプトを作成</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2 text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      <span>ベストプラクティスが自動で適用</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2 text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      <span>対話形式でわかりやすく</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2 text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      <span>後から手動編集も可能</span>
+                    </div>
+                  </div>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3">
+                    <Wand2 className="h-4 w-4 mr-2" />
+                    AI支援で作成を開始
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 手動作成 */}
+            <Card 
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 border-2 hover:border-green-500 hover:scale-105"
+              onClick={() => setCreationMode("manual")}
+            >
+              <CardContent className="p-8">
+                <div className="text-center space-y-6">
+                  <div className="mx-auto w-20 h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center">
+                    <Edit className="h-10 w-10 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                      手動で作成
+                    </h3>
+                    <Badge variant="outline" className="border-green-500 text-green-700 mb-4">
+                      上級者向け・詳細設定
+                    </Badge>
+                    <p className="text-gray-600 leading-relaxed">
+                      詳細な設定と高い自由度で、完全にカスタマイズしたプロンプトを一から作成できます
+                    </p>
+                  </div>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-center justify-center space-x-2 text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      <span>完全なカスタマイズが可能</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2 text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      <span>高度な編集機能とプレビュー</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2 text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      <span>ガイド機能で段階的に作成</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2 text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      <span>構造化エディターも利用可能</span>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-green-500 text-green-700 hover:bg-green-50 font-semibold py-3"
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    手動で作成を開始
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-12 space-y-2">
+            <p className="text-gray-500">
+              💡 AI支援で作成した後も、手動編集で細かい調整が可能です
+            </p>
+            <p className="text-sm text-gray-400">
+              どちらの方法でも、高品質なプロンプトを作成できます
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // AI支援フロー
+  if (creationMode === "ai") {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <PromptWizard
+          onComplete={handleAIWizardComplete}
+          onCancel={handleAIWizardCancel}
+        />
+      </div>
+    );
+  }
+
+  // 手動作成フロー（元のコード）
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ヘッダー */}
@@ -310,7 +530,7 @@ export default function NewPromptPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={handleCancel}
+                onClick={() => setCreationMode("select")}
                 className="flex items-center space-x-2"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -320,11 +540,16 @@ export default function NewPromptPage() {
               <div className="flex items-center space-x-2">
                 <Sparkles className="h-5 w-5 text-blue-600" />
                 <h1 className="text-lg font-semibold text-gray-900">
-                  新規プロンプト作成
+                  新規プロンプト作成 - 手動モード
                 </h1>
                 {isDirty && (
                   <Badge variant="outline" className="text-orange-600">
                     未保存
+                  </Badge>
+                )}
+                {aiHandoffSuccessful && (
+                  <Badge className="bg-green-100 text-green-800 animate-pulse">
+                    AI支援フローから引き継ぎ完了
                   </Badge>
                 )}
               </div>
@@ -339,6 +564,16 @@ export default function NewPromptPage() {
               )}
 
               <div className="flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSwitchToAI}
+                  className="flex items-center space-x-2 text-blue-600 hover:bg-blue-50"
+                >
+                  <Wand2 className="h-4 w-4" />
+                  <span>AI支援に切り替え</span>
+                </Button>
+                <Separator orientation="vertical" className="h-6" />
                 <Button
                   variant="ghost"
                   size="sm"
@@ -368,7 +603,7 @@ export default function NewPromptPage() {
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
-                  onClick={handleCancel}
+                  onClick={() => setCreationMode("select")}
                   disabled={isProcessing}
                 >
                   キャンセル
