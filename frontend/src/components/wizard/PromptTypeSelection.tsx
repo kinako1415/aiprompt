@@ -9,7 +9,6 @@ import {
   Star,
   Users,
   CheckCircle,
-  ArrowRight,
   RefreshCw,
 } from "lucide-react";
 import { PromptGoal, PromptType } from "../PromptWizard";
@@ -311,18 +310,33 @@ export function PromptTypeSelection({
         )}
 
         {/* Action Buttons */}
-        <div className="flex justify-between pb-6">
-          <Button variant="outline" onClick={onBack}>
-            目的入力に戻る
+        <div className="flex justify-between items-center pb-6">
+          <Button 
+            variant="outline" 
+            onClick={onBack}
+            className="bg-white hover:bg-gray-50 text-gray-700 border-gray-300 hover:border-gray-400 font-medium px-6 py-2"
+          >
+            ← 目的入力に戻る
           </Button>
+
+          {!selectedType && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <p className="text-amber-800 text-sm font-medium">
+                ⚠️ プロンプト型を選択してください
+              </p>
+            </div>
+          )}
 
           <Button
             onClick={() => selectedType && onSelect(selectedType)}
             disabled={!selectedType}
-            className="flex items-center space-x-2"
+            className={`flex items-center space-x-2 px-8 py-3 font-medium transition-colors ${
+              selectedType
+                ? "bg-gray-900 hover:bg-gray-800 text-white"
+                : "bg-gray-400 text-gray-300 cursor-not-allowed"
+            }`}
           >
-            <span>この型でプロンプトを構築</span>
-            <ArrowRight className="h-4 w-4" />
+            <span>🔧 この型でプロンプトを構築 →</span>
           </Button>
         </div>
       </div>

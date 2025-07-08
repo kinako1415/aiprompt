@@ -223,21 +223,27 @@ export function PromptTesting({
         </Card>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="setup" className="flex items-center space-x-2">
+          <TabsList className="grid w-full grid-cols-3 bg-gray-100 p-1 rounded-lg">
+            <TabsTrigger 
+              value="setup" 
+              className="flex items-center space-x-2 font-medium data-[state=active]:bg-gray-900 data-[state=active]:text-white transition-colors"
+            >
               <Settings className="h-4 w-4" />
-              <span>実行設定</span>
+              <span>⚙️ 実行設定</span>
             </TabsTrigger>
-            <TabsTrigger value="prompt" className="flex items-center space-x-2">
+            <TabsTrigger 
+              value="prompt" 
+              className="flex items-center space-x-2 font-medium data-[state=active]:bg-gray-900 data-[state=active]:text-white transition-colors"
+            >
               <Copy className="h-4 w-4" />
-              <span>プロンプト確認</span>
+              <span>📋 プロンプト確認</span>
             </TabsTrigger>
             <TabsTrigger
               value="results"
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 font-medium data-[state=active]:bg-gray-900 data-[state=active]:text-white transition-colors"
             >
               <Sparkles className="h-4 w-4" />
-              <span>実行結果</span>
+              <span>📊 実行結果</span>
             </TabsTrigger>
           </TabsList>
 
@@ -306,10 +312,23 @@ export function PromptTesting({
                       onClick={handleExecuteAll}
                       disabled={selectedServices.length === 0 || isExecuting}
                       size="lg"
-                      className="flex items-center space-x-2"
+                      className={`flex items-center space-x-2 px-8 py-3 font-medium transition-colors ${
+                        selectedServices.length === 0 || isExecuting
+                          ? "bg-gray-400 text-gray-300 cursor-not-allowed"
+                          : "bg-gray-900 hover:bg-gray-800 text-white"
+                      }`}
                     >
-                      <Play className="h-4 w-4" />
-                      <span>{selectedServices.length}個のサービスで実行</span>
+                      {isExecuting ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                          <span>🚀 実行中...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play className="h-5 w-5" />
+                          <span>🎯 AIでプロンプトをテスト実行（{selectedServices.length}サービス）</span>
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -329,9 +348,10 @@ export function PromptTesting({
                     onClick={() =>
                       navigator.clipboard.writeText(template.content)
                     }
+                    className="bg-white hover:bg-gray-50 text-gray-700 border-gray-300 hover:border-gray-400 font-medium"
                   >
                     <Copy className="h-4 w-4 mr-2" />
-                    コピー
+                    📋 コピー
                   </Button>
                 </CardTitle>
               </CardHeader>
@@ -385,10 +405,10 @@ export function PromptTesting({
                     size="sm"
                     onClick={handleRetryExecution}
                     disabled={isExecuting}
-                    className="flex items-center space-x-2"
+                    className="flex items-center space-x-2 bg-white hover:bg-gray-50 text-gray-700 border-gray-300 hover:border-gray-400 font-medium"
                   >
                     <RefreshCw className="h-4 w-4" />
-                    <span>再実行</span>
+                    <span>🔄 再実行</span>
                   </Button>
                 </div>
 
@@ -408,6 +428,7 @@ export function PromptTesting({
                             variant="outline"
                             size="sm"
                             onClick={() => handleCopyResult(result)}
+                            className="bg-white hover:bg-gray-50 text-gray-700 border-gray-300 hover:border-gray-400 font-medium"
                           >
                             <Copy className="h-4 w-4" />
                           </Button>
@@ -450,17 +471,33 @@ export function PromptTesting({
         </Tabs>
 
         {/* Action Buttons */}
-        <div className="flex justify-between pb-6">
-          <Button variant="outline" onClick={onBack}>
-            構築に戻る
+        <div className="flex justify-between items-center pb-6">
+          <Button 
+            variant="outline" 
+            onClick={onBack}
+            className="bg-white hover:bg-gray-50 text-gray-700 border-gray-300 hover:border-gray-400 font-medium px-6 py-2"
+          >
+            ← 構築に戻る
           </Button>
+
+          {executionResults.length === 0 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <p className="text-amber-800 text-sm font-medium">
+                ⚠️ AIテストを実行してください
+              </p>
+            </div>
+          )}
 
           <Button
             onClick={handleComplete}
             disabled={executionResults.length === 0}
-            className="flex items-center space-x-2"
+            className={`flex items-center space-x-2 px-8 py-3 font-medium transition-colors ${
+              executionResults.length === 0
+                ? "bg-gray-400 text-gray-300 cursor-not-allowed"
+                : "bg-gray-900 hover:bg-gray-800 text-white"
+            }`}
           >
-            <span>フィードバックに進む</span>
+            <span>🎯 次のステップ：結果を評価 →</span>
           </Button>
         </div>
       </div>

@@ -348,15 +348,34 @@ export function PromptGoalInput({
         )}
 
         {/* Submit Button */}
-        <div className="flex justify-center pb-6">
-          <Button
-            onClick={handleSubmit}
-            disabled={!isValid}
-            size="lg"
-            className="px-8"
-          >
-            プロンプト型を提案してもらう
-          </Button>
+        <div className="space-y-4 pb-6">
+          {!isValid && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center">
+              <p className="text-amber-800 font-medium">
+                ⚠️ 次のステップに進むには以下が必要です：
+              </p>
+              <div className="mt-2 space-y-1 text-sm text-amber-700">
+                {!selectedCategory && <p>• カテゴリーを選択してください</p>}
+                {!purpose.trim() && (
+                  <p>• 具体的な目的や内容を入力してください</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="flex justify-center">
+            <Button
+              onClick={handleSubmit}
+              disabled={!isValid}
+              className={`px-12 py-4 text-sm font-medium transition-colors ${
+                isValid
+                  ? "bg-gray-900 hover:bg-gray-800 text-white"
+                  : "bg-gray-400 text-gray-300 cursor-not-allowed"
+              }`}
+            >
+              🚀 プロンプト型を提案してもらう →
+            </Button>
+          </div>
         </div>
       </div>
     </div>

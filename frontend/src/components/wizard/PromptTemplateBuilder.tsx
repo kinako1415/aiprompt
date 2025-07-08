@@ -12,7 +12,6 @@ import {
   Play,
   Eye,
   Copy,
-  Save,
   Settings,
   AlertCircle,
   CheckCircle,
@@ -486,18 +485,33 @@ export function PromptTemplateBuilder({
         </Tabs>
 
         {/* Action Buttons */}
-        <div className="flex justify-between pb-6">
-          <Button variant="outline" onClick={onBack}>
-            型選択に戻る
+        <div className="flex justify-between items-center pb-6">
+          <Button 
+            variant="outline" 
+            onClick={onBack}
+            className="bg-white hover:bg-gray-50 text-gray-700 border-gray-300 hover:border-gray-400 font-medium px-6 py-2"
+          >
+            ← 型選択に戻る
           </Button>
+
+          {!generatedPrompt && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <p className="text-amber-800 text-sm font-medium">
+                ⚠️ プロンプトを生成してください
+              </p>
+            </div>
+          )}
 
           <Button
             onClick={handleComplete}
             disabled={!generatedPrompt}
-            className="flex items-center space-x-2"
+            className={`flex items-center space-x-2 px-8 py-3 font-medium transition-colors ${
+              generatedPrompt
+                ? "bg-gray-900 hover:bg-gray-800 text-white"
+                : "bg-gray-400 text-gray-300 cursor-not-allowed"
+            }`}
           >
-            <Save className="h-4 w-4" />
-            <span>フィードバックに進む</span>
+            <span>✅ 次のステップ：AIでテスト実行 →</span>
           </Button>
         </div>
       </div>
