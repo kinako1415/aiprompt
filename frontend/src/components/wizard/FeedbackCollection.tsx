@@ -539,8 +539,8 @@ export function FeedbackCollection({
 
         {/* Action Buttons */}
         <div className="flex justify-between items-center pb-6">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={onBack}
             className="bg-white hover:bg-gray-50 text-gray-700 border-gray-300 hover:border-gray-400 font-medium px-6 py-2"
           >

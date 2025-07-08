@@ -224,15 +224,15 @@ export function PromptTesting({
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3 bg-gray-100 p-1 rounded-lg">
-            <TabsTrigger 
-              value="setup" 
+            <TabsTrigger
+              value="setup"
               className="flex items-center space-x-2 font-medium data-[state=active]:bg-gray-900 data-[state=active]:text-white transition-colors"
             >
               <Settings className="h-4 w-4" />
               <span>⚙️ 実行設定</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="prompt" 
+            <TabsTrigger
+              value="prompt"
               className="flex items-center space-x-2 font-medium data-[state=active]:bg-gray-900 data-[state=active]:text-white transition-colors"
             >
               <Copy className="h-4 w-4" />
@@ -326,7 +326,10 @@ export function PromptTesting({
                       ) : (
                         <>
                           <Play className="h-5 w-5" />
-                          <span>🎯 AIでプロンプトをテスト実行（{selectedServices.length}サービス）</span>
+                          <span>
+                            🎯 AIでプロンプトをテスト実行（
+                            {selectedServices.length}サービス）
+                          </span>
                         </>
                       )}
                     </Button>
@@ -472,8 +475,8 @@ export function PromptTesting({
 
         {/* Action Buttons */}
         <div className="flex justify-between items-center pb-6">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={onBack}
             className="bg-white hover:bg-gray-50 text-gray-700 border-gray-300 hover:border-gray-400 font-medium px-6 py-2"
           >
