@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { PromptGoalInput } from './wizard/PromptGoalInput';
-import { PromptTypeSelection } from './wizard/PromptTypeSelection';
-import { PromptTemplateBuilder } from './wizard/PromptTemplateBuilder';
-import { PromptTesting } from './wizard/PromptTesting';
-import { FeedbackCollection } from './wizard/FeedbackCollection';
-import { Progress } from './ui/progress';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { 
-  ChevronLeft, 
-  Target, 
-  Sparkles, 
+import { useState } from "react";
+import { PromptGoalInput } from "./wizard/PromptGoalInput";
+import { PromptTypeSelection } from "./wizard/PromptTypeSelection";
+import { PromptTemplateBuilder } from "./wizard/PromptTemplateBuilder";
+import { PromptTesting } from "./wizard/PromptTesting";
+import { FeedbackCollection } from "./wizard/FeedbackCollection";
+import { Progress } from "./ui/progress";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import {
+  ChevronLeft,
+  Target,
+  Sparkles,
   Settings,
   Play,
   MessageSquare,
@@ -202,11 +202,11 @@ export function PromptWizard({ onComplete, onCancel }: PromptWizardProps) {
       content: instance.generatedPrompt,
       variables: [], // 実際の実装では適切に変換
       metadata: {
-        category: instance.type.useCases[0] || 'general',
+        category: instance.type.useCases[0] || "general",
         difficulty: instance.type.difficulty,
         rating: instance.type.rating,
-        usageCount: instance.type.usageCount
-      }
+        usageCount: instance.type.usageCount,
+      },
     };
     setBuiltTemplate(template);
     markStepCompleted(3);
@@ -218,13 +218,13 @@ export function PromptWizard({ onComplete, onCancel }: PromptWizardProps) {
     setExecutionResults(results);
     markStepCompleted(4);
     setCurrentStep(5);
-  };  // ステップ5: フィードバック完了
+  }; // ステップ5: フィードバック完了
   const handleFeedbackComplete = (feedback: Feedback) => {
     markStepCompleted(5);
-    
+
     // フィードバックをテンプレートに統合する（必要に応じて）
-    console.log('収集されたフィードバック:', feedback);
-    
+    console.log("収集されたフィードバック:", feedback);
+
     // 最終的なテンプレートを返す
     if (builtTemplate && onComplete) {
       onComplete(builtTemplate);

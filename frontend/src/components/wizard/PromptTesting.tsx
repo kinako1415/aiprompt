@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { 
-  Play, 
-  Copy, 
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import {
+  Play,
+  Copy,
   Clock,
   CheckCircle,
   AlertCircle,
   Settings,
   Sparkles,
-  RefreshCw
-} from 'lucide-react';
-import { PromptTemplate, ExecutionResult } from '../PromptWizard';
+  RefreshCw,
+} from "lucide-react";
+import { PromptTemplate, ExecutionResult } from "../PromptWizard";
 
 interface PromptTestingProps {
   template: PromptTemplate;
@@ -33,32 +33,37 @@ interface AIService {
 
 const aiServices: AIService[] = [
   {
-    id: 'chatgpt',
-    name: 'ChatGPT (GPT-4)',
-    description: '汎用的で高性能な会話AI',
+    id: "chatgpt",
+    name: "ChatGPT (GPT-4)",
+    description: "汎用的で高性能な会話AI",
     available: true,
-    cost: '約$0.03/1K tokens'
+    cost: "約$0.03/1K tokens",
   },
   {
-    id: 'claude',
-    name: 'Claude (Anthropic)',
-    description: '長文処理と安全性に優れたAI',
+    id: "claude",
+    name: "Claude (Anthropic)",
+    description: "長文処理と安全性に優れたAI",
     available: true,
-    cost: '約$0.015/1K tokens'
+    cost: "約$0.015/1K tokens",
   },
   {
-    id: 'gemini',
-    name: 'Gemini Pro',
-    description: 'マルチモーダル対応のGoogle AI',
+    id: "gemini",
+    name: "Gemini Pro",
+    description: "マルチモーダル対応のGoogle AI",
     available: true,
-    cost: '無料枠あり'
-  }
+    cost: "無料枠あり",
+  },
 ];
 
 // Mock AI response generation
-const generateMockAIResponse = async (prompt: string, service: string): Promise<string> => {
-  await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
-  
+const generateMockAIResponse = async (
+  prompt: string,
+  service: string
+): Promise<string> => {
+  await new Promise((resolve) =>
+    setTimeout(resolve, 2000 + Math.random() * 2000)
+  );
+
   const responses = {
     chatgpt: `【ChatGPT応答】
 
@@ -110,41 +115,55 @@ Gemini Proの強みを活かした応答：
 
 効率性：★★★★★
 情報の新しさ：★★★★★
-統合性：★★★★☆`
+統合性：★★★★☆`,
   };
 
-  return responses[service as keyof typeof responses] || `${service}からの模擬応答です。`;
+  return (
+    responses[service as keyof typeof responses] ||
+    `${service}からの模擬応答です。`
+  );
 };
 
-export function PromptTesting({ template, onComplete, onBack }: PromptTestingProps) {
-  const [selectedServices, setSelectedServices] = useState<string[]>(['chatgpt']);
-  const [executionResults, setExecutionResults] = useState<ExecutionResult[]>([]);
+export function PromptTesting({
+  template,
+  onComplete,
+  onBack,
+}: PromptTestingProps) {
+  const [selectedServices, setSelectedServices] = useState<string[]>([
+    "chatgpt",
+  ]);
+  const [executionResults, setExecutionResults] = useState<ExecutionResult[]>(
+    []
+  );
   const [isExecuting, setIsExecuting] = useState(false);
-  const [activeTab, setActiveTab] = useState('setup');
+  const [activeTab, setActiveTab] = useState("setup");
 
   const handleServiceToggle = (serviceId: string) => {
-    setSelectedServices(prev => 
+    setSelectedServices((prev) =>
       prev.includes(serviceId)
-        ? prev.filter(id => id !== serviceId)
+        ? prev.filter((id) => id !== serviceId)
         : [...prev, serviceId]
     );
   };
 
   const handleExecuteAll = async () => {
     setIsExecuting(true);
-    setActiveTab('results');
-    
+    setActiveTab("results");
+
     const newResults: ExecutionResult[] = [];
-    
+
     for (const serviceId of selectedServices) {
-      const service = aiServices.find(s => s.id === serviceId);
+      const service = aiServices.find((s) => s.id === serviceId);
       if (!service) continue;
-      
+
       try {
         const startTime = Date.now();
-        const response = await generateMockAIResponse(template.content, serviceId);
+        const response = await generateMockAIResponse(
+          template.content,
+          serviceId
+        );
         const endTime = Date.now();
-        
+
         const result: ExecutionResult = {
           id: `${serviceId}-${Date.now()}-${Math.random()}`,
           promptText: template.content,
@@ -152,21 +171,21 @@ export function PromptTesting({ template, onComplete, onBack }: PromptTestingPro
           output: response,
           timestamp: new Date(),
           executionTime: endTime - startTime,
-          cost: Math.random() * 0.1 + 0.01 // Mock cost
+          cost: Math.random() * 0.1 + 0.01, // Mock cost
         };
-        
+
         newResults.push(result);
-        setExecutionResults(prev => [...prev, result]);
-        
+        setExecutionResults((prev) => [...prev, result]);
+
         // 少し待ってから次のサービスを実行
         if (selectedServices.indexOf(serviceId) < selectedServices.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise((resolve) => setTimeout(resolve, 500));
         }
       } catch (error) {
         console.error(`Failed to execute with ${service.name}:`, error);
       }
     }
-    
+
     setIsExecuting(false);
   };
 
@@ -196,7 +215,9 @@ export function PromptTesting({ template, onComplete, onBack }: PromptTestingPro
           </CardHeader>
           <CardContent>
             <div className="text-sm text-green-700">
-              <p>作成したプロンプトを複数のAIサービスで実行し、結果を比較検証します。</p>
+              <p>
+                作成したプロンプトを複数のAIサービスで実行し、結果を比較検証します。
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -211,7 +232,10 @@ export function PromptTesting({ template, onComplete, onBack }: PromptTestingPro
               <Copy className="h-4 w-4" />
               <span>プロンプト確認</span>
             </TabsTrigger>
-            <TabsTrigger value="results" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="results"
+              className="flex items-center space-x-2"
+            >
               <Sparkles className="h-4 w-4" />
               <span>実行結果</span>
             </TabsTrigger>
@@ -228,19 +252,21 @@ export function PromptTesting({ template, onComplete, onBack }: PromptTestingPro
                   <p className="text-sm text-gray-600">
                     プロンプトを実行するAIサービスを選択してください。複数選択可能です。
                   </p>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {aiServices.map((service) => (
                       <Card
                         key={service.id}
                         className={`cursor-pointer transition-all hover:shadow-md ${
                           selectedServices.includes(service.id)
-                            ? 'ring-2 ring-blue-500 bg-blue-50'
+                            ? "ring-2 ring-blue-500 bg-blue-50"
                             : service.available
-                            ? 'hover:bg-gray-50'
-                            : 'opacity-50 cursor-not-allowed'
+                            ? "hover:bg-gray-50"
+                            : "opacity-50 cursor-not-allowed"
                         }`}
-                        onClick={() => service.available && handleServiceToggle(service.id)}
+                        onClick={() =>
+                          service.available && handleServiceToggle(service.id)
+                        }
                       >
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between mb-2">
@@ -256,13 +282,15 @@ export function PromptTesting({ template, onComplete, onBack }: PromptTestingPro
                               <CheckCircle className="h-5 w-5 text-blue-500 flex-shrink-0 ml-2" />
                             )}
                           </div>
-                          
+
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-gray-500">
                               {service.cost}
                             </span>
                             <Badge
-                              variant={service.available ? "default" : "secondary"}
+                              variant={
+                                service.available ? "default" : "secondary"
+                              }
                               className="text-xs"
                             >
                               {service.available ? "利用可能" : "準備中"}
@@ -272,7 +300,7 @@ export function PromptTesting({ template, onComplete, onBack }: PromptTestingPro
                       </Card>
                     ))}
                   </div>
-                  
+
                   <div className="flex justify-center pt-4">
                     <Button
                       onClick={handleExecuteAll}
@@ -281,9 +309,7 @@ export function PromptTesting({ template, onComplete, onBack }: PromptTestingPro
                       className="flex items-center space-x-2"
                     >
                       <Play className="h-4 w-4" />
-                      <span>
-                        {selectedServices.length}個のサービスで実行
-                      </span>
+                      <span>{selectedServices.length}個のサービスで実行</span>
                     </Button>
                   </div>
                 </div>
@@ -300,7 +326,9 @@ export function PromptTesting({ template, onComplete, onBack }: PromptTestingPro
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => navigator.clipboard.writeText(template.content)}
+                    onClick={() =>
+                      navigator.clipboard.writeText(template.content)
+                    }
                   >
                     <Copy className="h-4 w-4 mr-2" />
                     コピー
@@ -313,7 +341,7 @@ export function PromptTesting({ template, onComplete, onBack }: PromptTestingPro
                     {template.content}
                   </pre>
                 </div>
-                
+
                 <div className="mt-4 p-4 bg-blue-50 rounded-lg">
                   <div className="flex items-center space-x-2 text-blue-800 mb-2">
                     <AlertCircle className="h-4 w-4" />
@@ -336,7 +364,9 @@ export function PromptTesting({ template, onComplete, onBack }: PromptTestingPro
               <Card className="bg-blue-50 border-blue-200">
                 <CardContent className="p-6 text-center">
                   <Clock className="h-8 w-8 text-blue-600 mx-auto mb-4 animate-spin" />
-                  <p className="text-blue-800 font-medium">AIサービスで実行中...</p>
+                  <p className="text-blue-800 font-medium">
+                    AIサービスで実行中...
+                  </p>
                   <p className="text-sm text-blue-600 mt-2">
                     {executionResults.length} / {selectedServices.length} 完了
                   </p>
@@ -390,15 +420,13 @@ export function PromptTesting({ template, onComplete, onBack }: PromptTestingPro
                           {result.output}
                         </pre>
                       </div>
-                      
+
                       <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
                         <span>
                           実行時刻: {result.timestamp.toLocaleString()}
                         </span>
                         {result.cost && (
-                          <span>
-                            コスト: ${result.cost.toFixed(4)}
-                          </span>
+                          <span>コスト: ${result.cost.toFixed(4)}</span>
                         )}
                       </div>
                     </CardContent>
@@ -426,7 +454,7 @@ export function PromptTesting({ template, onComplete, onBack }: PromptTestingPro
           <Button variant="outline" onClick={onBack}>
             構築に戻る
           </Button>
-          
+
           <Button
             onClick={handleComplete}
             disabled={executionResults.length === 0}

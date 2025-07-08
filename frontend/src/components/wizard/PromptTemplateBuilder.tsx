@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
-import { Badge } from '../ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { 
-  Play, 
-  Eye, 
-  Copy, 
-  Save, 
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
+import { Badge } from "../ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import {
+  Play,
+  Eye,
+  Copy,
+  Save,
   Settings,
   AlertCircle,
   CheckCircle,
   Clock,
-  Sparkles
-} from 'lucide-react';
-import { PromptGoal, PromptType, PromptInstance } from '../PromptWizard';
+  Sparkles,
+} from "lucide-react";
+import { PromptGoal, PromptType, PromptInstance } from "../PromptWizard";
 
 interface PromptTemplateBuilderProps {
   type: PromptType;
@@ -36,42 +36,48 @@ interface TemplateValues {
 const extractVariables = (structure: Record<string, string>): string[] => {
   const variables = new Set<string>();
   const regex = /\{([^}]+)\}/g;
-  
+
   Object.values(structure).forEach((text: string) => {
-    if (typeof text === 'string') {
+    if (typeof text === "string") {
       let match;
       while ((match = regex.exec(text)) !== null) {
         variables.add(match[1]);
       }
     }
   });
-  
+
   return Array.from(variables);
 };
 
 // 変数をテンプレートに適用してプロンプトを生成
-const generatePrompt = (structure: Record<string, string>, values: TemplateValues): string => {
-  let prompt = '';
-  
+const generatePrompt = (
+  structure: Record<string, string>,
+  values: TemplateValues
+): string => {
+  let prompt = "";
+
   Object.entries(structure).forEach(([, template]: [string, string]) => {
-    if (template && typeof template === 'string') {
+    if (template && typeof template === "string") {
       let processedTemplate = template;
       Object.entries(values).forEach(([variable, value]) => {
-        const regex = new RegExp(`\\{${variable}\\}`, 'g');
-        processedTemplate = processedTemplate.replace(regex, value || `{${variable}}`);
+        const regex = new RegExp(`\\{${variable}\\}`, "g");
+        processedTemplate = processedTemplate.replace(
+          regex,
+          value || `{${variable}}`
+        );
       });
-      prompt += processedTemplate + '\n\n';
+      prompt += processedTemplate + "\n\n";
     }
   });
-  
+
   return prompt.trim();
 };
 
 // Mock AI response generation
 const generateMockAIResponse = async (prompt: string): Promise<string> => {
   // 実際の実装では実際のAI APIを呼び出し
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
   return `これはモックのAI応答です。
 
 実際のプロンプト：
@@ -86,12 +92,16 @@ const generateMockAIResponse = async (prompt: string): Promise<string> => {
 実際の実装では、選択されたAI（ChatGPT、Claude等）からの実際の応答がここに表示されます。`;
 };
 
-export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTemplateBuilderProps) {
+export function PromptTemplateBuilder({
+  type,
+  onComplete,
+  onBack,
+}: PromptTemplateBuilderProps) {
   const [values, setValues] = useState<TemplateValues>({});
-  const [generatedPrompt, setGeneratedPrompt] = useState('');
+  const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [activeTab, setActiveTab] = useState('build');
+  const [activeTab, setActiveTab] = useState("build");
 
   const variables = extractVariables(type.structure);
 
@@ -99,7 +109,7 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
   const handleGeneratePrompt = () => {
     const prompt = generatePrompt(type.structure, values);
     setGeneratedPrompt(prompt);
-    setActiveTab('preview');
+    setActiveTab("preview");
   };
 
   // AI テスト実行
@@ -108,15 +118,15 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
       handleGeneratePrompt();
       return;
     }
-    
+
     setIsGenerating(true);
-    setActiveTab('test');
-    
+    setActiveTab("test");
+
     try {
       const response = await generateMockAIResponse(generatedPrompt);
       setAiResponse(response);
     } catch (error) {
-      console.error('AI test failed:', error);
+      console.error("AI test failed:", error);
     } finally {
       setIsGenerating(false);
     }
@@ -129,14 +139,14 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
       type,
       values,
       generatedPrompt,
-      aiResponse: aiResponse || undefined
+      aiResponse: aiResponse || undefined,
     };
     onComplete(instance);
   };
 
   // 値の更新
   const updateValue = (variable: string, value: string) => {
-    setValues(prev => ({ ...prev, [variable]: value }));
+    setValues((prev) => ({ ...prev, [variable]: value }));
   };
 
   // プロンプトをクリップボードにコピー
@@ -144,8 +154,11 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
     navigator.clipboard.writeText(generatedPrompt);
   };
 
-  const filledVariables = variables.filter(v => values[v]?.trim());
-  const completionPercentage = variables.length > 0 ? (filledVariables.length / variables.length) * 100 : 0;
+  const filledVariables = variables.filter((v) => values[v]?.trim());
+  const completionPercentage =
+    variables.length > 0
+      ? (filledVariables.length / variables.length) * 100
+      : 0;
 
   return (
     <div className="p-6">
@@ -165,7 +178,9 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
           </CardHeader>
           <CardContent>
             <div className="text-sm text-purple-700">
-              <p>各要素に具体的な値を入力して、あなた専用のプロンプトを作成しましょう。</p>
+              <p>
+                各要素に具体的な値を入力して、あなた専用のプロンプトを作成しましょう。
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -176,7 +191,10 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
               <Settings className="h-4 w-4" />
               <span>構築</span>
             </TabsTrigger>
-            <TabsTrigger value="preview" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="preview"
+              className="flex items-center space-x-2"
+            >
               <Eye className="h-4 w-4" />
               <span>プレビュー</span>
             </TabsTrigger>
@@ -191,47 +209,68 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Input Fields */}
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg text-gray-900">変数を入力してください</h3>
-                
+                <h3 className="font-semibold text-lg text-gray-900">
+                  変数を入力してください
+                </h3>
+
                 <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
                   {variables.map((variable) => {
-                    const isRequired = variable.includes('目的') || variable.includes('タスク') || variable.includes('専門分野');
+                    const isRequired =
+                      variable.includes("目的") ||
+                      variable.includes("タスク") ||
+                      variable.includes("専門分野");
                     return (
                       <Card key={variable}>
                         <CardHeader className="pb-3">
                           <Label className="flex items-center space-x-2">
                             <span>{variable}</span>
-                            {isRequired && <span className="text-red-500">*</span>}
+                            {isRequired && (
+                              <span className="text-red-500">*</span>
+                            )}
                             {values[variable] && (
                               <CheckCircle className="h-4 w-4 text-green-500" />
                             )}
                           </Label>
                         </CardHeader>
                         <CardContent>
-                          {variable.includes('例') || variable.includes('詳細') || variable.includes('説明') ? (
+                          {variable.includes("例") ||
+                          variable.includes("詳細") ||
+                          variable.includes("説明") ? (
                             <Textarea
-                              value={values[variable] || ''}
-                              onChange={(e) => updateValue(variable, e.target.value)}
+                              value={values[variable] || ""}
+                              onChange={(e) =>
+                                updateValue(variable, e.target.value)
+                              }
                               placeholder={`${variable}を入力してください...`}
                               rows={3}
                             />
                           ) : (
                             <Input
-                              value={values[variable] || ''}
-                              onChange={(e) => updateValue(variable, e.target.value)}
+                              value={values[variable] || ""}
+                              onChange={(e) =>
+                                updateValue(variable, e.target.value)
+                              }
                               placeholder={`${variable}を入力してください...`}
                             />
                           )}
-                          
+
                           {/* 入力支援 */}
-                          {variable === '専門分野' && (
+                          {variable === "専門分野" && (
                             <div className="mt-2 flex flex-wrap gap-1">
-                              {['マーケティング', 'エンジニアリング', 'デザイン', '営業', '人事'].map((suggestion) => (
+                              {[
+                                "マーケティング",
+                                "エンジニアリング",
+                                "デザイン",
+                                "営業",
+                                "人事",
+                              ].map((suggestion) => (
                                 <Button
                                   key={suggestion}
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => updateValue(variable, suggestion)}
+                                  onClick={() =>
+                                    updateValue(variable, suggestion)
+                                  }
                                   className="text-xs"
                                 >
                                   {suggestion}
@@ -239,15 +278,23 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
                               ))}
                             </div>
                           )}
-                          
-                          {variable === 'トーン' && (
+
+                          {variable === "トーン" && (
                             <div className="mt-2 flex flex-wrap gap-1">
-                              {['フォーマル', 'カジュアル', '親しみやすい', '専門的', '説明的'].map((suggestion) => (
+                              {[
+                                "フォーマル",
+                                "カジュアル",
+                                "親しみやすい",
+                                "専門的",
+                                "説明的",
+                              ].map((suggestion) => (
                                 <Button
                                   key={suggestion}
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => updateValue(variable, suggestion)}
+                                  onClick={() =>
+                                    updateValue(variable, suggestion)
+                                  }
                                   className="text-xs"
                                 >
                                   {suggestion}
@@ -264,21 +311,26 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
 
               {/* Live Preview */}
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg text-gray-900">リアルタイムプレビュー</h3>
-                
+                <h3 className="font-semibold text-lg text-gray-900">
+                  リアルタイムプレビュー
+                </h3>
+
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">生成されるプロンプト</CardTitle>
+                    <CardTitle className="text-base">
+                      生成されるプロンプト
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
                       <pre className="text-sm whitespace-pre-wrap text-gray-700">
-                        {generatePrompt(type.structure, values) || 'まだ変数が入力されていません...'}
+                        {generatePrompt(type.structure, values) ||
+                          "まだ変数が入力されていません..."}
                       </pre>
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <div className="flex flex-col space-y-2">
                   <Button
                     onClick={handleGeneratePrompt}
@@ -332,10 +384,11 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
               <CardContent>
                 <div className="bg-white border-2 border-dashed border-gray-300 p-6 rounded-lg max-h-96 overflow-y-auto">
                   <pre className="whitespace-pre-wrap text-sm text-gray-800">
-                    {generatedPrompt || 'プロンプトが生成されていません。「構築」タブで変数を入力してください。'}
+                    {generatedPrompt ||
+                      "プロンプトが生成されていません。「構築」タブで変数を入力してください。"}
                   </pre>
                 </div>
-                
+
                 {generatedPrompt && (
                   <div className="mt-4 p-4 bg-blue-50 rounded-lg">
                     <div className="flex items-center space-x-2 text-blue-800 mb-2">
@@ -345,7 +398,9 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
                     <div className="text-sm text-blue-700 space-y-1">
                       <p>文字数: {generatedPrompt.length} 文字</p>
                       <p>変数数: {variables.length} 個</p>
-                      <p>入力済み: {filledVariables.length} / {variables.length}</p>
+                      <p>
+                        入力済み: {filledVariables.length} / {variables.length}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -363,7 +418,9 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
                 {!generatedPrompt ? (
                   <div className="text-center py-8">
                     <AlertCircle className="h-8 w-8 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">まずプロンプトを生成してください</p>
+                    <p className="text-gray-600">
+                      まずプロンプトを生成してください
+                    </p>
                     <Button
                       onClick={handleGeneratePrompt}
                       className="mt-4"
@@ -376,7 +433,9 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
                   <div className="space-y-4">
                     {/* Input Prompt */}
                     <div>
-                      <h4 className="font-medium text-gray-700 mb-2">入力プロンプト:</h4>
+                      <h4 className="font-medium text-gray-700 mb-2">
+                        入力プロンプト:
+                      </h4>
                       <div className="bg-gray-50 p-4 rounded-lg max-h-48 overflow-y-auto">
                         <pre className="text-sm whitespace-pre-wrap text-gray-700">
                           {generatedPrompt}
@@ -388,14 +447,18 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
                     <div>
                       <h4 className="font-medium text-gray-700 mb-2 flex items-center space-x-2">
                         <span>AI応答:</span>
-                        {isGenerating && <Clock className="h-4 w-4 animate-spin" />}
+                        {isGenerating && (
+                          <Clock className="h-4 w-4 animate-spin" />
+                        )}
                       </h4>
-                      
+
                       {isGenerating ? (
                         <div className="bg-blue-50 p-6 rounded-lg text-center">
                           <Sparkles className="h-8 w-8 text-blue-600 mx-auto mb-4 animate-pulse" />
                           <p className="text-blue-700">AIが応答を生成中...</p>
-                          <p className="text-sm text-blue-600 mt-2">しばらくお待ちください</p>
+                          <p className="text-sm text-blue-600 mt-2">
+                            しばらくお待ちください
+                          </p>
                         </div>
                       ) : aiResponse ? (
                         <div className="bg-white border border-gray-200 p-4 rounded-lg max-h-64 overflow-y-auto">
@@ -427,7 +490,7 @@ export function PromptTemplateBuilder({ type, onComplete, onBack }: PromptTempla
           <Button variant="outline" onClick={onBack}>
             型選択に戻る
           </Button>
-          
+
           <Button
             onClick={handleComplete}
             disabled={!generatedPrompt}

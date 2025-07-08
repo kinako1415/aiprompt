@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Textarea } from '../ui/textarea';
-import { Label } from '../ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { 
-  Star, 
-  ThumbsUp, 
-  ThumbsDown, 
-  MessageSquare, 
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Textarea } from "../ui/textarea";
+import { Label } from "../ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import {
+  Star,
+  ThumbsUp,
+  ThumbsDown,
+  MessageSquare,
   Lightbulb,
   CheckCircle,
   Target,
   TrendingUp,
-  Save
-} from 'lucide-react';
-import { ExecutionResult, PromptTemplate, Feedback } from '../PromptWizard';
+  Save,
+} from "lucide-react";
+import { ExecutionResult, PromptTemplate, Feedback } from "../PromptWizard";
 
 interface FeedbackCollectionProps {
   results: ExecutionResult[];
@@ -38,81 +38,96 @@ interface TextHighlight {
   resultId: string;
   startIndex: number;
   endIndex: number;
-  sentiment: 'positive' | 'negative';
+  sentiment: "positive" | "negative";
   comment?: string;
 }
 
-export function FeedbackCollection({ results, onComplete, onBack }: FeedbackCollectionProps) {
-  const [selectedResult, setSelectedResult] = useState<ExecutionResult | null>(results[0] || null);
+export function FeedbackCollection({
+  results,
+  onComplete,
+  onBack,
+}: FeedbackCollectionProps) {
+  const [selectedResult, setSelectedResult] = useState<ExecutionResult | null>(
+    results[0] || null
+  );
   const [overallRating, setOverallRating] = useState<1 | 2 | 3 | 4 | 5>(5);
-  const [emotionRating, setEmotionRating] = useState<'positive' | 'neutral' | 'negative'>('positive');
+  const [emotionRating, setEmotionRating] = useState<
+    "positive" | "neutral" | "negative"
+  >("positive");
   const [aspectRatings, setAspectRatings] = useState<AspectRating>({
     accuracy: 5,
     usefulness: 5,
     creativity: 4,
-    readability: 5
+    readability: 5,
   });
   const [textHighlights, setTextHighlights] = useState<TextHighlight[]>([]);
-  const [comment, setComment] = useState('');
-  const [suggestedImprovements, setSuggestedImprovements] = useState('');
-  const [activeTab, setActiveTab] = useState('rating');
+  const [comment, setComment] = useState("");
+  const [suggestedImprovements, setSuggestedImprovements] = useState("");
+  const [activeTab, setActiveTab] = useState("rating");
 
-  const handleAspectRatingChange = (aspect: keyof AspectRating, rating: number) => {
-    setAspectRatings(prev => ({
+  const handleAspectRatingChange = (
+    aspect: keyof AspectRating,
+    rating: number
+  ) => {
+    setAspectRatings((prev) => ({
       ...prev,
-      [aspect]: rating
+      [aspect]: rating,
     }));
   };
 
   const handleTextSelection = () => {
     if (!selectedResult) return;
-    
+
     const selection = window.getSelection();
     if (!selection || selection.toString().length === 0) return;
-    
+
     const selectedText = selection.toString();
-    
+
     // 簡単な実装 - 実際にはより精密な位置計算が必要
     const highlight: TextHighlight = {
       resultId: selectedResult.id,
       startIndex: 0, // 実際の実装では正確な位置を計算
       endIndex: selectedText.length,
-      sentiment: 'positive',
-      comment: ''
+      sentiment: "positive",
+      comment: "",
     };
-    
-    setTextHighlights(prev => [...prev, highlight]);
+
+    setTextHighlights((prev) => [...prev, highlight]);
     selection.removeAllRanges();
   };
 
   const handleRemoveHighlight = (index: number) => {
-    setTextHighlights(prev => prev.filter((_, i) => i !== index));
+    setTextHighlights((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmitFeedback = () => {
     if (!selectedResult) return;
-    
+
     const feedback: Feedback = {
       executionId: selectedResult.id,
       overallRating,
       emotionRating,
       aspectRatings,
-      textHighlights: textHighlights.map(h => ({
+      textHighlights: textHighlights.map((h) => ({
         startIndex: h.startIndex,
         endIndex: h.endIndex,
         sentiment: h.sentiment,
-        comment: h.comment
+        comment: h.comment,
       })),
       comment: comment.trim() || undefined,
-      suggestedImprovements: suggestedImprovements.trim() || undefined
+      suggestedImprovements: suggestedImprovements.trim() || undefined,
     };
-    
+
     onComplete(feedback);
   };
 
-  const renderStarRating = (value: number, onChange: (rating: number) => void, size: 'sm' | 'lg' = 'sm') => {
-    const sizeClass = size === 'lg' ? 'h-8 w-8' : 'h-5 w-5';
-    
+  const renderStarRating = (
+    value: number,
+    onChange: (rating: number) => void,
+    size: "sm" | "lg" = "sm"
+  ) => {
+    const sizeClass = size === "lg" ? "h-8 w-8" : "h-5 w-5";
+
     return (
       <div className="flex items-center space-x-1">
         {[1, 2, 3, 4, 5].map((star) => (
@@ -120,7 +135,7 @@ export function FeedbackCollection({ results, onComplete, onBack }: FeedbackColl
             key={star}
             onClick={() => onChange(star)}
             className={`${sizeClass} cursor-pointer transition-colors ${
-              star <= value ? 'text-yellow-400 fill-current' : 'text-gray-300'
+              star <= value ? "text-yellow-400 fill-current" : "text-gray-300"
             }`}
           >
             <Star className="w-full h-full" />
@@ -132,9 +147,9 @@ export function FeedbackCollection({ results, onComplete, onBack }: FeedbackColl
 
   const getEmotionIcon = (emotion: string) => {
     switch (emotion) {
-      case 'positive':
+      case "positive":
         return <ThumbsUp className="h-4 w-4 text-green-500" />;
-      case 'negative':
+      case "negative":
         return <ThumbsDown className="h-4 w-4 text-red-500" />;
       default:
         return <MessageSquare className="h-4 w-4 text-gray-500" />;
@@ -142,13 +157,14 @@ export function FeedbackCollection({ results, onComplete, onBack }: FeedbackColl
   };
 
   const aspectLabels = {
-    accuracy: '正確性',
-    usefulness: '実用性',
-    creativity: '創造性',
-    readability: '読みやすさ'
+    accuracy: "正確性",
+    usefulness: "実用性",
+    creativity: "創造性",
+    readability: "読みやすさ",
   };
 
-  const averageRating = Object.values(aspectRatings).reduce((sum, rating) => sum + rating, 0) / 4;
+  const averageRating =
+    Object.values(aspectRatings).reduce((sum, rating) => sum + rating, 0) / 4;
 
   return (
     <div className="p-6">
@@ -180,8 +196,8 @@ export function FeedbackCollection({ results, onComplete, onBack }: FeedbackColl
                   key={result.id}
                   className={`cursor-pointer transition-all hover:shadow-md ${
                     selectedResult?.id === result.id
-                      ? 'ring-2 ring-blue-500 bg-blue-50'
-                      : 'hover:bg-gray-50'
+                      ? "ring-2 ring-blue-500 bg-blue-50"
+                      : "hover:bg-gray-50"
                   }`}
                   onClick={() => setSelectedResult(result)}
                 >
@@ -211,15 +227,24 @@ export function FeedbackCollection({ results, onComplete, onBack }: FeedbackColl
         {selectedResult && (
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="rating" className="flex items-center space-x-2">
+              <TabsTrigger
+                value="rating"
+                className="flex items-center space-x-2"
+              >
                 <Star className="h-4 w-4" />
                 <span>評価</span>
               </TabsTrigger>
-              <TabsTrigger value="analysis" className="flex items-center space-x-2">
+              <TabsTrigger
+                value="analysis"
+                className="flex items-center space-x-2"
+              >
                 <MessageSquare className="h-4 w-4" />
                 <span>分析</span>
               </TabsTrigger>
-              <TabsTrigger value="improvements" className="flex items-center space-x-2">
+              <TabsTrigger
+                value="improvements"
+                className="flex items-center space-x-2"
+              >
                 <Lightbulb className="h-4 w-4" />
                 <span>改善提案</span>
               </TabsTrigger>
@@ -234,7 +259,7 @@ export function FeedbackCollection({ results, onComplete, onBack }: FeedbackColl
                     <CardTitle>実行結果</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div 
+                    <div
                       className="bg-gray-50 p-4 rounded-lg max-h-96 overflow-y-auto cursor-text"
                       onMouseUp={handleTextSelection}
                     >
@@ -257,35 +282,52 @@ export function FeedbackCollection({ results, onComplete, onBack }: FeedbackColl
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="text-center">
-                        {renderStarRating(overallRating, (rating) => setOverallRating(rating as 1 | 2 | 3 | 4 | 5), 'lg')}
+                        {renderStarRating(
+                          overallRating,
+                          (rating) =>
+                            setOverallRating(rating as 1 | 2 | 3 | 4 | 5),
+                          "lg"
+                        )}
                         <p className="text-sm text-gray-600 mt-2">
-                          {overallRating === 5 ? '非常に満足' :
-                           overallRating === 4 ? '満足' :
-                           overallRating === 3 ? '普通' :
-                           overallRating === 2 ? '不満' : '非常に不満'}
+                          {overallRating === 5
+                            ? "非常に満足"
+                            : overallRating === 4
+                            ? "満足"
+                            : overallRating === 3
+                            ? "普通"
+                            : overallRating === 2
+                            ? "不満"
+                            : "非常に不満"}
                         </p>
                       </div>
 
                       <div>
-                        <Label className="text-sm font-medium">感情的な印象</Label>
+                        <Label className="text-sm font-medium">
+                          感情的な印象
+                        </Label>
                         <div className="flex items-center space-x-4 mt-2">
-                          {(['positive', 'neutral', 'negative'] as const).map((emotion) => (
-                            <button
-                              key={emotion}
-                              onClick={() => setEmotionRating(emotion)}
-                              className={`flex items-center space-x-2 px-3 py-2 rounded-lg border transition-colors ${
-                                emotionRating === emotion
-                                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                                  : 'border-gray-300 hover:bg-gray-50'
-                              }`}
-                            >
-                              {getEmotionIcon(emotion)}
-                              <span className="text-sm">
-                                {emotion === 'positive' ? 'ポジティブ' :
-                                 emotion === 'neutral' ? 'ニュートラル' : 'ネガティブ'}
-                              </span>
-                            </button>
-                          ))}
+                          {(["positive", "neutral", "negative"] as const).map(
+                            (emotion) => (
+                              <button
+                                key={emotion}
+                                onClick={() => setEmotionRating(emotion)}
+                                className={`flex items-center space-x-2 px-3 py-2 rounded-lg border transition-colors ${
+                                  emotionRating === emotion
+                                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                                    : "border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                {getEmotionIcon(emotion)}
+                                <span className="text-sm">
+                                  {emotion === "positive"
+                                    ? "ポジティブ"
+                                    : emotion === "neutral"
+                                    ? "ニュートラル"
+                                    : "ネガティブ"}
+                                </span>
+                              </button>
+                            )
+                          )}
                         </div>
                       </div>
                     </CardContent>
@@ -298,20 +340,30 @@ export function FeedbackCollection({ results, onComplete, onBack }: FeedbackColl
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {Object.entries(aspectRatings).map(([aspect, rating]) => (
-                        <div key={aspect} className="flex items-center justify-between">
+                        <div
+                          key={aspect}
+                          className="flex items-center justify-between"
+                        >
                           <Label className="text-sm font-medium">
                             {aspectLabels[aspect as keyof AspectRating]}
                           </Label>
-                          {renderStarRating(rating, (newRating) => handleAspectRatingChange(aspect as keyof AspectRating, newRating))}
+                          {renderStarRating(rating, (newRating) =>
+                            handleAspectRatingChange(
+                              aspect as keyof AspectRating,
+                              newRating
+                            )
+                          )}
                         </div>
                       ))}
-                      
+
                       <div className="border-t pt-4">
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium">平均評価</span>
                           <div className="flex items-center space-x-2">
                             <TrendingUp className="h-4 w-4 text-green-500" />
-                            <span className="font-medium">{averageRating.toFixed(1)}/5</span>
+                            <span className="font-medium">
+                              {averageRating.toFixed(1)}/5
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -329,15 +381,28 @@ export function FeedbackCollection({ results, onComplete, onBack }: FeedbackColl
                   <CardContent>
                     <div className="space-y-3">
                       {textHighlights.map((highlight, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                        >
                           <div className="flex-1">
                             <div className="flex items-center space-x-2 mb-1">
-                              <Badge variant={highlight.sentiment === 'positive' ? 'default' : 'destructive'}>
-                                {highlight.sentiment === 'positive' ? 'ポジティブ' : 'ネガティブ'}
+                              <Badge
+                                variant={
+                                  highlight.sentiment === "positive"
+                                    ? "default"
+                                    : "destructive"
+                                }
+                              >
+                                {highlight.sentiment === "positive"
+                                  ? "ポジティブ"
+                                  : "ネガティブ"}
                               </Badge>
                             </div>
                             {highlight.comment && (
-                              <p className="text-sm text-gray-600">{highlight.comment}</p>
+                              <p className="text-sm text-gray-600">
+                                {highlight.comment}
+                              </p>
                             )}
                           </div>
                           <Button
@@ -451,17 +516,23 @@ export function FeedbackCollection({ results, onComplete, onBack }: FeedbackColl
               <div>
                 <span className="font-medium text-green-800">総合評価:</span>
                 <div className="flex items-center space-x-1 mt-1">
-                  {renderStarRating(overallRating, () => {}, 'sm')}
+                  {renderStarRating(overallRating, () => {}, "sm")}
                   <span className="ml-2 text-green-700">{overallRating}/5</span>
                 </div>
               </div>
               <div>
-                <span className="font-medium text-green-800">平均詳細評価:</span>
-                <p className="text-green-700 mt-1">{averageRating.toFixed(1)}/5</p>
+                <span className="font-medium text-green-800">
+                  平均詳細評価:
+                </span>
+                <p className="text-green-700 mt-1">
+                  {averageRating.toFixed(1)}/5
+                </p>
               </div>
               <div>
                 <span className="font-medium text-green-800">評価対象:</span>
-                <p className="text-green-700 mt-1">{selectedResult?.aiService}</p>
+                <p className="text-green-700 mt-1">
+                  {selectedResult?.aiService}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -472,7 +543,7 @@ export function FeedbackCollection({ results, onComplete, onBack }: FeedbackColl
           <Button variant="outline" onClick={onBack}>
             テスト実行に戻る
           </Button>
-          
+
           <Button
             onClick={handleSubmitFeedback}
             disabled={!selectedResult}

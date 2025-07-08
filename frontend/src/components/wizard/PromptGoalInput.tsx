@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
-import { Badge } from '../ui/badge';
-import { 
-  Target, 
-  Lightbulb, 
-  MessageSquare, 
-  Image, 
-  Code, 
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
+import { Badge } from "../ui/badge";
+import {
+  Target,
+  Lightbulb,
+  MessageSquare,
+  Image,
+  Code,
   FileText,
   Languages,
-  Zap
-} from 'lucide-react';
-import { PromptGoal } from '../PromptWizard';
+  Zap,
+} from "lucide-react";
+import { PromptGoal } from "../PromptWizard";
 
 interface PromptGoalInputProps {
   onComplete: (goal: PromptGoal) => void;
@@ -25,108 +25,117 @@ interface PromptGoalInputProps {
 }
 
 const categories = [
-  { 
-    id: 'text_generation', 
-    name: '文章生成', 
-    icon: FileText, 
-    examples: ['ブログ記事', 'メール', '企画書', '商品説明'],
-    color: 'bg-blue-100 text-blue-800 border-blue-200'
+  {
+    id: "text_generation",
+    name: "文章生成",
+    icon: FileText,
+    examples: ["ブログ記事", "メール", "企画書", "商品説明"],
+    color: "bg-blue-100 text-blue-800 border-blue-200",
   },
-  { 
-    id: 'image_generation', 
-    name: '画像生成', 
-    icon: Image, 
-    examples: ['イラスト', 'ロゴ', 'アイコン', 'バナー'],
-    color: 'bg-green-100 text-green-800 border-green-200'
+  {
+    id: "image_generation",
+    name: "画像生成",
+    icon: Image,
+    examples: ["イラスト", "ロゴ", "アイコン", "バナー"],
+    color: "bg-green-100 text-green-800 border-green-200",
   },
-  { 
-    id: 'code_generation', 
-    name: 'コード生成', 
-    icon: Code, 
-    examples: ['関数', 'スクリプト', 'API', 'テスト'],
-    color: 'bg-purple-100 text-purple-800 border-purple-200'
+  {
+    id: "code_generation",
+    name: "コード生成",
+    icon: Code,
+    examples: ["関数", "スクリプト", "API", "テスト"],
+    color: "bg-purple-100 text-purple-800 border-purple-200",
   },
-  { 
-    id: 'analysis', 
-    name: '分析・要約', 
-    icon: Target, 
-    examples: ['データ分析', '文書要約', 'レポート', '比較'],
-    color: 'bg-orange-100 text-orange-800 border-orange-200'
+  {
+    id: "analysis",
+    name: "分析・要約",
+    icon: Target,
+    examples: ["データ分析", "文書要約", "レポート", "比較"],
+    color: "bg-orange-100 text-orange-800 border-orange-200",
   },
-  { 
-    id: 'translation', 
-    name: '翻訳・言語処理', 
-    icon: Languages, 
-    examples: ['翻訳', '校正', '言い換え', '多言語対応'],
-    color: 'bg-red-100 text-red-800 border-red-200'
+  {
+    id: "translation",
+    name: "翻訳・言語処理",
+    icon: Languages,
+    examples: ["翻訳", "校正", "言い換え", "多言語対応"],
+    color: "bg-red-100 text-red-800 border-red-200",
   },
-  { 
-    id: 'brainstorming', 
-    name: 'アイデア出し', 
-    icon: Lightbulb, 
-    examples: ['ブレインストーミング', '企画', '創作', '問題解決'],
-    color: 'bg-yellow-100 text-yellow-800 border-yellow-200'
-  }
+  {
+    id: "brainstorming",
+    name: "アイデア出し",
+    icon: Lightbulb,
+    examples: ["ブレインストーミング", "企画", "創作", "問題解決"],
+    color: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  },
 ];
 
 const targetAIs = [
-  { id: 'chatgpt', name: 'ChatGPT (OpenAI)', description: '汎用的な会話AI' },
-  { id: 'claude', name: 'Claude (Anthropic)', description: '長文処理が得意' },
-  { id: 'gemini', name: 'Gemini (Google)', description: 'マルチモーダル対応' },
-  { id: 'dall-e', name: 'DALL-E (OpenAI)', description: '画像生成専用' },
-  { id: 'midjourney', name: 'Midjourney', description: 'アート系画像生成' },
-  { id: 'any', name: '指定なし', description: '汎用的なプロンプト' }
+  { id: "chatgpt", name: "ChatGPT (OpenAI)", description: "汎用的な会話AI" },
+  { id: "claude", name: "Claude (Anthropic)", description: "長文処理が得意" },
+  { id: "gemini", name: "Gemini (Google)", description: "マルチモーダル対応" },
+  { id: "dall-e", name: "DALL-E (OpenAI)", description: "画像生成専用" },
+  { id: "midjourney", name: "Midjourney", description: "アート系画像生成" },
+  { id: "any", name: "指定なし", description: "汎用的なプロンプト" },
 ];
 
 const purposeExamples = {
   text_generation: [
-    'SEO対策されたブログ記事を書いてほしい',
-    '顧客向けのフォーマルなメールを作成したい',
-    '新商品の魅力的な説明文を書いてほしい',
-    'プレゼン用の企画書を作成したい'
+    "SEO対策されたブログ記事を書いてほしい",
+    "顧客向けのフォーマルなメールを作成したい",
+    "新商品の魅力的な説明文を書いてほしい",
+    "プレゼン用の企画書を作成したい",
   ],
   image_generation: [
-    'ミニマルなロゴデザインを作ってほしい',
-    'ファンタジー風景のイラストを描いてほしい',
-    'プレゼン用のアイコンセットを作りたい',
-    'SNS投稿用のバナーを作成したい'
+    "ミニマルなロゴデザインを作ってほしい",
+    "ファンタジー風景のイラストを描いてほしい",
+    "プレゼン用のアイコンセットを作りたい",
+    "SNS投稿用のバナーを作成したい",
   ],
   code_generation: [
-    'API連携のPython関数を書いてほしい',
-    'レスポンシブなCSSコードを生成したい',
-    'データベース処理のSQLを作成したい',
-    'ユニットテストコードを自動生成したい'
+    "API連携のPython関数を書いてほしい",
+    "レスポンシブなCSSコードを生成したい",
+    "データベース処理のSQLを作成したい",
+    "ユニットテストコードを自動生成したい",
   ],
   analysis: [
-    '売上データから傾向を分析してほしい',
-    '長い会議録を要約してほしい',
-    '競合他社と自社サービスを比較したい',
-    'アンケート結果をレポートにまとめたい'
+    "売上データから傾向を分析してほしい",
+    "長い会議録を要約してほしい",
+    "競合他社と自社サービスを比較したい",
+    "アンケート結果をレポートにまとめたい",
   ],
   translation: [
-    '技術文書を自然な日本語に翻訳したい',
-    'ビジネスメールを丁寧な英語に翻訳したい',
-    '文章の表現をよりフォーマルにしたい',
-    '専門用語を一般向けに言い換えたい'
+    "技術文書を自然な日本語に翻訳したい",
+    "ビジネスメールを丁寧な英語に翻訳したい",
+    "文章の表現をよりフォーマルにしたい",
+    "専門用語を一般向けに言い換えたい",
   ],
   brainstorming: [
-    '新規事業のアイデアを出してほしい',
-    'イベント企画のコンセプトを考えたい',
-    '小説のプロット案を複数提案してほしい',
-    '技術的な課題の解決策を考えたい'
-  ]
+    "新規事業のアイデアを出してほしい",
+    "イベント企画のコンセプトを考えたい",
+    "小説のプロット案を複数提案してほしい",
+    "技術的な課題の解決策を考えたい",
+  ],
 };
 
-export function PromptGoalInput({ onComplete, initialData }: PromptGoalInputProps) {
-  const [purpose, setPurpose] = useState(initialData?.purpose || '');
-  const [keywords, setKeywords] = useState(initialData?.keywords || '');
-  const [scenario, setScenario] = useState(initialData?.scenario || '');
-  const [selectedCategory, setSelectedCategory] = useState(initialData?.category || '');
-  const [targetAI, setTargetAI] = useState(initialData?.targetAI || 'any');
+export function PromptGoalInput({
+  onComplete,
+  initialData,
+}: PromptGoalInputProps) {
+  const [purpose, setPurpose] = useState(initialData?.purpose || "");
+  const [keywords, setKeywords] = useState(initialData?.keywords || "");
+  const [scenario, setScenario] = useState(initialData?.scenario || "");
+  const [selectedCategory, setSelectedCategory] = useState(
+    initialData?.category || ""
+  );
+  const [targetAI, setTargetAI] = useState(initialData?.targetAI || "any");
   const [showExamples, setShowExamples] = useState(true);
 
-  const selectedCategoryData = categories.find(cat => cat.id === selectedCategory);
-  const examples = selectedCategory ? purposeExamples[selectedCategory as keyof typeof purposeExamples] : [];
+  const selectedCategoryData = categories.find(
+    (cat) => cat.id === selectedCategory
+  );
+  const examples = selectedCategory
+    ? purposeExamples[selectedCategory as keyof typeof purposeExamples]
+    : [];
 
   const handleSubmit = () => {
     if (purpose && selectedCategory) {
@@ -135,7 +144,7 @@ export function PromptGoalInput({ onComplete, initialData }: PromptGoalInputProp
         keywords,
         scenario,
         category: selectedCategory,
-        targetAI
+        targetAI,
       });
     }
   };
@@ -164,9 +173,9 @@ export function PromptGoalInput({ onComplete, initialData }: PromptGoalInputProp
                 <Card
                   key={category.id}
                   className={`cursor-pointer transition-all hover:shadow-md ${
-                    selectedCategory === category.id 
-                      ? 'ring-2 ring-blue-500 bg-blue-50' 
-                      : 'hover:bg-gray-50'
+                    selectedCategory === category.id
+                      ? "ring-2 ring-blue-500 bg-blue-50"
+                      : "hover:bg-gray-50"
                   }`}
                   onClick={() => setSelectedCategory(category.id)}
                 >
@@ -179,7 +188,11 @@ export function PromptGoalInput({ onComplete, initialData }: PromptGoalInputProp
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {category.examples.slice(0, 3).map((example, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
+                        <Badge
+                          key={index}
+                          variant="secondary"
+                          className="text-xs"
+                        >
                           {example}
                         </Badge>
                       ))}
@@ -202,7 +215,8 @@ export function PromptGoalInput({ onComplete, initialData }: PromptGoalInputProp
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="purpose">
-                具体的な目的や内容を教えてください <span className="text-red-500">*</span>
+                具体的な目的や内容を教えてください{" "}
+                <span className="text-red-500">*</span>
               </Label>
               <Textarea
                 id="purpose"
@@ -255,9 +269,7 @@ export function PromptGoalInput({ onComplete, initialData }: PromptGoalInputProp
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="keywords">
-                重要なキーワードやテーマ
-              </Label>
+              <Label htmlFor="keywords">重要なキーワードやテーマ</Label>
               <Input
                 id="keywords"
                 placeholder="例：AI, 機械学習, 初心者向け"
@@ -271,9 +283,7 @@ export function PromptGoalInput({ onComplete, initialData }: PromptGoalInputProp
             </div>
 
             <div>
-              <Label htmlFor="scenario">
-                使用する場面やシナリオ
-              </Label>
+              <Label htmlFor="scenario">使用する場面やシナリオ</Label>
               <Textarea
                 id="scenario"
                 placeholder="例：会社のブログでIT初心者向けに技術解説をする"
@@ -285,9 +295,7 @@ export function PromptGoalInput({ onComplete, initialData }: PromptGoalInputProp
             </div>
 
             <div>
-              <Label htmlFor="targetAI">
-                使用予定のAI
-              </Label>
+              <Label htmlFor="targetAI">使用予定のAI</Label>
               <select
                 id="targetAI"
                 value={targetAI}
@@ -322,7 +330,9 @@ export function PromptGoalInput({ onComplete, initialData }: PromptGoalInputProp
                 </div>
                 {keywords && (
                   <div>
-                    <span className="font-medium text-blue-800">キーワード:</span>
+                    <span className="font-medium text-blue-800">
+                      キーワード:
+                    </span>
                     <span className="ml-2">{keywords}</span>
                   </div>
                 )}

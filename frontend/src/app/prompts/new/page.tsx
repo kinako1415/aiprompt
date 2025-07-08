@@ -148,7 +148,9 @@ export default function NewPromptPage() {
   const router = useRouter();
 
   // 作成方法の選択状態（追加）
-  const [creationMode, setCreationMode] = useState<"select" | "manual" | "ai">("select");
+  const [creationMode, setCreationMode] = useState<"select" | "manual" | "ai">(
+    "select"
+  );
 
   // フォームの状態管理
   const [title, setTitle] = useState("");
@@ -321,17 +323,17 @@ export default function NewPromptPage() {
 
   // AI支援フロー完了時のハンドラー
   const handleAIWizardComplete = (template: PromptTemplate) => {
-    console.log('AI支援フローで作成されたプロンプト:', template);
+    console.log("AI支援フローで作成されたプロンプト:", template);
     // 作成されたプロンプトを手動編集モードに引き継ぎ
-    setTitle(template.name || '');
-    setDescription(template.description || '');
-    setContent(template.content || '');
-    setCategory(template.metadata?.category || '');
+    setTitle(template.name || "");
+    setDescription(template.description || "");
+    setContent(template.content || "");
+    setCategory(template.metadata?.category || "");
     // タグがある場合は設定
     if (template.metadata?.tags && Array.isArray(template.metadata.tags)) {
       setTags(template.metadata.tags);
     }
-    setCreationMode('manual');
+    setCreationMode("manual");
     setCurrentStep(2); // プロンプト編集ステップに移動
     setAiHandoffSuccessful(true);
     // 3秒後に成功表示を消す
@@ -339,7 +341,7 @@ export default function NewPromptPage() {
   };
 
   const handleAIWizardCancel = () => {
-    setCreationMode('select');
+    setCreationMode("select");
   };
 
   // 手動モードからAI支援モードに切り替える時の確認
@@ -350,7 +352,7 @@ export default function NewPromptPage() {
       );
       if (!confirmed) return;
     }
-    setCreationMode('ai');
+    setCreationMode("ai");
   };
 
   // 作成方法選択画面の表示判定
@@ -397,7 +399,7 @@ export default function NewPromptPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* AI支援作成 */}
-            <Card 
+            <Card
               className="cursor-pointer hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-500 hover:scale-105"
               onClick={() => setCreationMode("ai")}
             >
@@ -444,7 +446,7 @@ export default function NewPromptPage() {
             </Card>
 
             {/* 手動作成 */}
-            <Card 
+            <Card
               className="cursor-pointer hover:shadow-xl transition-all duration-300 border-2 hover:border-green-500 hover:scale-105"
               onClick={() => setCreationMode("manual")}
             >
@@ -457,7 +459,10 @@ export default function NewPromptPage() {
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">
                       手動で作成
                     </h3>
-                    <Badge variant="outline" className="border-green-500 text-green-700 mb-4">
+                    <Badge
+                      variant="outline"
+                      className="border-green-500 text-green-700 mb-4"
+                    >
                       上級者向け・詳細設定
                     </Badge>
                     <p className="text-gray-600 leading-relaxed">
@@ -482,8 +487,8 @@ export default function NewPromptPage() {
                       <span>構造化エディターも利用可能</span>
                     </div>
                   </div>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full border-green-500 text-green-700 hover:bg-green-50 font-semibold py-3"
                   >
                     <Edit className="h-4 w-4 mr-2" />
