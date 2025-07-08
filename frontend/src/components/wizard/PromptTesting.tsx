@@ -263,7 +263,7 @@ export function PromptTesting({
                     {aiServices.map((service) => (
                       <Card
                         key={service.id}
-                        className={`cursor-pointer transition-all hover:shadow-md ${
+                        className={`cursor-pointer transition-all ${
                           selectedServices.includes(service.id)
                             ? "ring-2 ring-blue-500 bg-blue-50"
                             : service.available

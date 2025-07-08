@@ -201,7 +201,7 @@ export function PromptTypeSelection({
           {promptTypes.map((type) => (
             <Card
               key={type.id}
-              className={`cursor-pointer transition-all hover:shadow-lg ${
+              className={`cursor-pointer transition-all ${
                 selectedTypeId === type.id
                   ? "ring-2 ring-blue-500 bg-blue-50 border-blue-300"
                   : "hover:bg-gray-50"

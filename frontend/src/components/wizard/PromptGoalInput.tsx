@@ -172,7 +172,7 @@ export function PromptGoalInput({
               {categories.map((category) => (
                 <Card
                   key={category.id}
-                  className={`cursor-pointer transition-all hover:shadow-md ${
+                  className={`cursor-pointer transition-all ${
                     selectedCategory === category.id
                       ? "ring-2 ring-blue-500 bg-blue-50"
                       : "hover:bg-gray-50"

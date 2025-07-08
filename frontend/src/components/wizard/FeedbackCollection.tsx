@@ -558,7 +558,7 @@ export function FeedbackCollection({
           <Button
             onClick={handleSubmitFeedback}
             disabled={!selectedResult}
-            className={`flex items-center space-x-2 px-12 py-4 text-lg font-bold transition-colors ${
+            className={`flex items-center space-x-2 px-12 py-4 text-sm font-bold transition-colors ${
               selectedResult
                 ? "bg-gray-900 hover:bg-gray-800 text-white"
                 : "bg-gray-400 text-gray-300 cursor-not-allowed"

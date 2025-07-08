@@ -77,7 +77,7 @@ export default function TemplatesPage() {
   }: {
     template: (typeof templateData)[0];
   }) => (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer">
+    <Card className="transition-shadow cursor-pointer">
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex-1">
