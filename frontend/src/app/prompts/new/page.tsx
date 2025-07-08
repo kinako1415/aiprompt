@@ -263,8 +263,8 @@ export default function NewPromptPage() {
       // ここで実際のAPI呼び出しを行う
       console.log("Saving prompt...", promptData);
 
-      // 保存成功後、プロンプト一覧ページに戻る
-      router.push("/prompts");
+      // 保存成功後、マイプロンプトページに戻る
+      router.push("/my-prompts");
     } catch (error) {
       console.error("Save failed:", error);
     } finally {
@@ -279,7 +279,7 @@ export default function NewPromptPage() {
       );
       if (!confirmed) return;
     }
-    router.push("/prompts");
+    router.push("/my-prompts");
   };
 
   const handleAddTag = () => {
@@ -391,7 +391,7 @@ export default function NewPromptPage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               プロンプトの作成方法を選択してください
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
               AI支援で簡単に作成するか、手動で詳細に作成するかを選択できます。
               どちらを選んでも、後から編集や調整が可能です。
             </p>
@@ -400,7 +400,7 @@ export default function NewPromptPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* AI支援作成 */}
             <Card
-              className="cursor-pointer hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-500 hover:scale-105"
+              className="cursor-pointer transition-all duration-300 border-2 hover:border-blue-500"
               onClick={() => setCreationMode("ai")}
             >
               <CardContent className="p-8">
@@ -447,7 +447,7 @@ export default function NewPromptPage() {
 
             {/* 手動作成 */}
             <Card
-              className="cursor-pointer hover:shadow-xl transition-all duration-300 border-2 hover:border-green-500 hover:scale-105"
+              className="cursor-pointer transition-all duration-300 border-2 hover:border-green-500"
               onClick={() => setCreationMode("manual")}
             >
               <CardContent className="p-8">

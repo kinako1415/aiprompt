@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -73,12 +74,17 @@ const samplePrompts = [
 ];
 
 export default function MyPromptsPage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [activeTab, setActiveTab] = useState("all");
 
   const handlePromptAction = (action: string, promptId: string) => {
     console.log(`${action} action for prompt ${promptId}`);
+  };
+
+  const handleNewPrompt = () => {
+    router.push("/prompts/new");
   };
 
   return (
@@ -98,7 +104,7 @@ export default function MyPromptsPage() {
             <Upload className="h-4 w-4 mr-2" />
             インポート
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={handleNewPrompt}>
             <Plus className="h-4 w-4 mr-2" />
             新規作成
           </Button>
@@ -267,7 +273,7 @@ export default function MyPromptsPage() {
                   <p className="text-gray-500 mb-4">
                     プロンプトがまだありません
                   </p>
-                  <Button>
+                  <Button onClick={handleNewPrompt}>
                     <Plus className="h-4 w-4 mr-2" />
                     最初のプロンプトを作成
                   </Button>
