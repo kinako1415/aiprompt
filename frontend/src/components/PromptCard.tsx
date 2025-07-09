@@ -106,8 +106,8 @@ export function PromptCard({
 
   if (viewMode === "list") {
     return (
-      <Card className="border border-gray-100">
-        <CardContent className="p-3">
+      <Card className="border border-gray-100 rounded-2xl">
+        <CardContent className="p-2.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 flex-1">
               <Avatar className="h-10 w-10">
@@ -213,8 +213,8 @@ export function PromptCard({
 
   // Grid variant (default)
   return (
-    <Card className="border border-gray-100">
-      <CardHeader className="pb-2">
+    <Card className="border border-gray-100 rounded-2xl">
+      <CardHeader className="pb-1.5">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-2">
             <Avatar className="h-8 w-8">
