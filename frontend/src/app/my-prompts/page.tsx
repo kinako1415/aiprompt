@@ -112,7 +112,7 @@ export default function MyPromptsPage() {
       </div>
 
       {/* 統計カード */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
         <Card>
           <CardHeader className="pb-1">
             <CardTitle className="text-xs font-medium text-gray-500">
@@ -249,7 +249,7 @@ export default function MyPromptsPage() {
 
             <TabsContent value={activeTab}>
               <div
-                className={`grid gap-4 ${
+                className={`grid gap-2 ${
                   viewMode === "grid"
                     ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
                     : "grid-cols-1"
