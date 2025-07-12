@@ -6,6 +6,7 @@ import { combineReducers } from "@reduxjs/toolkit";
 
 // Import slices (to be created)
 import { promptApi } from "./api/promptApi";
+import { templateApi } from "./api/templateApi";
 import userSlice from "./slices/userSlice";
 import uiSlice from "./slices/uiSlice";
 import collaborationSlice from "./slices/collaborationSlice";
@@ -14,7 +15,7 @@ const persistConfig = {
     key: "root",
     storage,
     whitelist: ["user", "ui"], // Only persist user and UI state
-    blacklist: ["promptApi", "collaboration"], // Don't persist API cache or real-time data
+    blacklist: ["promptApi", "templateApi", "collaboration"], // Don't persist API cache or real-time data
 };
 
 const rootReducer = combineReducers({
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
     ui: uiSlice,
     collaboration: collaborationSlice,
     [promptApi.reducerPath]: promptApi.reducer,
+    [templateApi.reducerPath]: templateApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -33,7 +35,7 @@ export const store = configureStore({
             serializableCheck: {
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
             },
-        }).concat(promptApi.middleware),
+        }).concat(promptApi.middleware, templateApi.middleware),
 });
 
 export const persistor = persistStore(store);

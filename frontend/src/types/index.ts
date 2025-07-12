@@ -70,6 +70,8 @@ export interface CreatePromptRequest {
   tags: string[];
   aiModel: string;
   isPublic?: boolean;
+  template_id?: string;
+  visibility?: 'private' | 'public' | 'team';
 }
 
 export interface UpdatePromptRequest {

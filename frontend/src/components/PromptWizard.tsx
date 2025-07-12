@@ -3,20 +3,10 @@
 import { useState } from "react";
 import { PromptGoalInput } from "./wizard/PromptGoalInput";
 import { PromptTypeSelection } from "./wizard/PromptTypeSelection";
-import { PromptTemplateBuilder } from "./wizard/PromptTemplateBuilder";
-import { PromptTesting } from "./wizard/PromptTesting";
-import { FeedbackCollection } from "./wizard/FeedbackCollection";
 import { Progress } from "./ui/progress";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import {
-  ChevronLeft,
-  Target,
-  Sparkles,
-  Settings,
-  Play,
-  MessageSquare,
-} from "lucide-react";
+import { ChevronLeft, Target, Sparkles } from "lucide-react";
 
 // 型定義
 export interface PromptGoal {
@@ -60,12 +50,13 @@ export interface PromptTemplate {
 
 export interface PromptVariable {
   name: string;
-  type: "text" | "number" | "select" | "file" | "date";
+  type: "text" | "number" | "select" | "textarea" | "file" | "date";
   required: boolean;
   placeholder?: string;
   options?: string[];
   validation?: RegExp;
   description?: string;
+  defaultValue?: string;
 }
 
 export interface ExecutionResult {
@@ -125,27 +116,6 @@ const wizardSteps = [
     icon: Sparkles,
     completed: false,
   },
-  {
-    id: 3,
-    name: "構築",
-    description: "プロンプトを構築",
-    icon: Settings,
-    completed: false,
-  },
-  {
-    id: 4,
-    name: "実行・テスト",
-    description: "AIで実行してテスト",
-    icon: Play,
-    completed: false,
-  },
-  {
-    id: 5,
-    name: "フィードバック",
-    description: "結果を評価して改善",
-    icon: MessageSquare,
-    completed: false,
-  },
 ];
 
 interface PromptWizardProps {
@@ -159,13 +129,6 @@ export function PromptWizard({ onComplete, onCancel }: PromptWizardProps) {
 
   // データ状態
   const [promptGoal, setPromptGoal] = useState<PromptGoal | null>(null);
-  const [selectedType, setSelectedType] = useState<PromptType | null>(null);
-  const [builtTemplate, setBuiltTemplate] = useState<PromptTemplate | null>(
-    null
-  );
-  const [executionResults, setExecutionResults] = useState<ExecutionResult[]>(
-    []
-  );
 
   // プログレス計算
   const progress = ((currentStep - 1) / (steps.length - 1)) * 100;
@@ -186,49 +149,55 @@ export function PromptWizard({ onComplete, onCancel }: PromptWizardProps) {
     setCurrentStep(2);
   };
 
-  // ステップ2: 型選択完了
+  // ステップ2: 型選択完了（最終ステップ）
   const handleTypeSelect = (type: PromptType) => {
-    setSelectedType(type);
     markStepCompleted(2);
-    setCurrentStep(3);
-  };
 
-  // ステップ3: テンプレート構築完了
-  const handleTemplateBuilt = (instance: PromptInstance) => {
-    // PromptInstanceからPromptTemplateを作成
+    // プロンプトコンテンツから変数を抽出
+    const content = Object.values(type.structure).join("\n\n");
+    const variables = extractVariables(content);
+
+    // 選択された型からPromptTemplateを作成
     const template: PromptTemplate = {
-      id: instance.id,
-      name: instance.type.name,
-      content: instance.generatedPrompt,
-      variables: [], // 実際の実装では適切に変換
+      id: Date.now().toString(),
+      name: type.name,
+      content,
+      variables,
       metadata: {
-        category: instance.type.useCases[0] || "general",
-        difficulty: instance.type.difficulty,
-        rating: instance.type.rating,
-        usageCount: instance.type.usageCount,
+        category: type.useCases[0] || "general",
+        difficulty: type.difficulty,
+        rating: type.rating,
+        usageCount: type.usageCount,
       },
     };
-    setBuiltTemplate(template);
-    markStepCompleted(3);
-    setCurrentStep(4);
+
+    // 完了処理
+    if (onComplete) {
+      onComplete(template);
+    }
   };
 
-  // ステップ4: 実行完了
-  const handleExecutionComplete = (results: ExecutionResult[]) => {
-    setExecutionResults(results);
-    markStepCompleted(4);
-    setCurrentStep(5);
-  }; // ステップ5: フィードバック完了
-  const handleFeedbackComplete = (feedback: Feedback) => {
-    markStepCompleted(5);
+  // プロンプトコンテンツから変数を抽出する関数
+  const extractVariables = (content: string): PromptVariable[] => {
+    const variablePattern = /\{([^}]+)\}/g;
+    const variables: PromptVariable[] = [];
+    const foundVariables = new Set<string>();
 
-    // フィードバックをテンプレートに統合する（必要に応じて）
-    console.log("収集されたフィードバック:", feedback);
-
-    // 最終的なテンプレートを返す
-    if (builtTemplate && onComplete) {
-      onComplete(builtTemplate);
+    let match;
+    while ((match = variablePattern.exec(content)) !== null) {
+      const variableName = match[1];
+      if (!foundVariables.has(variableName)) {
+        foundVariables.add(variableName);
+        variables.push({
+          name: variableName,
+          description: `${variableName}の値を入力してください`,
+          type: "text",
+          required: true,
+        });
+      }
     }
+
+    return variables;
   };
 
   // 前のステップに戻る
@@ -253,32 +222,6 @@ export function PromptWizard({ onComplete, onCancel }: PromptWizardProps) {
           <PromptTypeSelection
             goal={promptGoal}
             onSelect={handleTypeSelect}
-            onBack={handleBack}
-          />
-        ) : null;
-      case 3:
-        return selectedType && promptGoal ? (
-          <PromptTemplateBuilder
-            type={selectedType}
-            goal={promptGoal}
-            onComplete={handleTemplateBuilt}
-            onBack={handleBack}
-          />
-        ) : null;
-      case 4:
-        return builtTemplate ? (
-          <PromptTesting
-            template={builtTemplate}
-            onComplete={handleExecutionComplete}
-            onBack={handleBack}
-          />
-        ) : null;
-      case 5:
-        return executionResults.length > 0 && builtTemplate ? (
-          <FeedbackCollection
-            results={executionResults}
-            template={builtTemplate}
-            onComplete={handleFeedbackComplete}
             onBack={handleBack}
           />
         ) : null;

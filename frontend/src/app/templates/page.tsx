@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,56 +17,45 @@ import {
   Copy,
   Edit,
   Eye,
+  Loader2,
 } from "lucide-react";
-
-// テンプレートのサンプルデータ
-const templateData = [
-  {
-    id: "1",
-    title: "ブログ記事作成テンプレート",
-    description:
-      "SEOに最適化されたブログ記事を効率的に作成するためのテンプレート",
-    category: "文章生成",
-    tags: ["ブログ", "SEO", "マーケティング"],
-    variables: ["タイトル", "キーワード", "対象読者", "記事の長さ"],
-    usageCount: 856,
-    rating: 4.7,
-    isPopular: true,
-    author: "マーケティングチーム",
-    createdAt: "2024-01-01T00:00:00Z",
-  },
-  {
-    id: "2",
-    title: "商品レビュー分析テンプレート",
-    description: "商品レビューを分析し、改善点と強みを抽出するテンプレート",
-    category: "分析・要約",
-    tags: ["レビュー", "分析", "商品開発"],
-    variables: ["商品名", "レビューデータ", "分析項目"],
-    usageCount: 432,
-    rating: 4.4,
-    isPopular: false,
-    author: "プロダクトチーム",
-    createdAt: "2023-12-15T00:00:00Z",
-  },
-  {
-    id: "3",
-    title: "メール返信テンプレート",
-    description: "ビジネスメールの返信を適切なトーンで作成するテンプレート",
-    category: "コミュニケーション",
-    tags: ["メール", "ビジネス", "コミュニケーション"],
-    variables: ["相手の名前", "件名", "返信内容", "緊急度"],
-    usageCount: 1240,
-    rating: 4.9,
-    isPopular: true,
-    author: "ビジネスチーム",
-    createdAt: "2023-11-20T00:00:00Z",
-  },
-];
+import { PromptTemplate } from "@/store/api/templateApi";
+import { MockTemplateService } from "@/utils/mockServices";
+// import { useGetTemplatesQuery, useGetUserTemplatesQuery } from "@/store/api/templateApi";
 
 export default function TemplatesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [activeTab, setActiveTab] = useState("all");
+  const [templates, setTemplates] = useState<PromptTemplate[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // テンプレートを読み込む
+  useEffect(() => {
+    const loadTemplates = () => {
+      setIsLoading(true);
+      try {
+        const savedTemplates = MockTemplateService.getTemplates();
+        setTemplates(savedTemplates);
+      } catch (error) {
+        console.error("テンプレートの読み込みエラー:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadTemplates();
+  }, []);
+
+  // 検索フィルタリング
+  const filteredTemplates = templates.filter(template => 
+    template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (template.description && template.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  // 表示するテンプレートデータの決定
+  const displayTemplates = filteredTemplates;
+  const error = null;
 
   const handleTemplateAction = (action: string, templateId: string) => {
     console.log(`${action} action for template ${templateId}`);
@@ -75,7 +64,7 @@ export default function TemplatesPage() {
   const TemplateCard = ({
     template,
   }: {
-    template: (typeof templateData)[0];
+    template: PromptTemplate;
   }) => (
     <Card className="transition-shadow cursor-pointer">
       <CardHeader>
@@ -83,8 +72,8 @@ export default function TemplatesPage() {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <Puzzle className="h-5 w-5 text-blue-600" />
-              <CardTitle className="text-lg">{template.title}</CardTitle>
-              {template.isPopular && (
+              <CardTitle className="text-lg">{template.name}</CardTitle>
+              {template.usageCount && template.usageCount > 1000 && (
                 <Badge
                   variant="secondary"
                   className="bg-orange-100 text-orange-700"
@@ -97,12 +86,12 @@ export default function TemplatesPage() {
 
             <div className="flex items-center gap-2 mb-2">
               <Badge variant="outline">{template.category}</Badge>
-              {template.tags.slice(0, 2).map((tag) => (
+              {template.tags && template.tags.slice(0, 2).map((tag) => (
                 <Badge key={tag} variant="secondary" className="text-xs">
                   {tag}
                 </Badge>
               ))}
-              {template.tags.length > 2 && (
+              {template.tags && template.tags.length > 2 && (
                 <span className="text-xs text-gray-500">
                   +{template.tags.length - 2}
                 </span>
@@ -110,7 +99,7 @@ export default function TemplatesPage() {
             </div>
 
             <div className="text-xs text-gray-500">
-              変数: {template.variables.join(", ")}
+              変数: {template.variables.map(v => v.name).join(", ")}
             </div>
           </div>
         </div>
@@ -121,11 +110,11 @@ export default function TemplatesPage() {
           <div className="flex items-center space-x-4 text-sm text-gray-600">
             <div className="flex items-center">
               <Eye className="h-4 w-4 mr-1" />
-              {template.usageCount.toLocaleString()}回使用
+              {template.usageCount?.toLocaleString() || 0}回使用
             </div>
             <div className="flex items-center">
               <Star className="h-4 w-4 mr-1 fill-yellow-400 text-yellow-400" />
-              {template.rating}
+              {template.rating || 0}
             </div>
           </div>
 
@@ -133,21 +122,21 @@ export default function TemplatesPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => handleTemplateAction("preview", template.id)}
+              onClick={() => handleTemplateAction("preview", template.id || "")}
             >
               <Eye className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => handleTemplateAction("copy", template.id)}
+              onClick={() => handleTemplateAction("copy", template.id || "")}
             >
               <Copy className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => handleTemplateAction("use", template.id)}
+              onClick={() => handleTemplateAction("use", template.id || "")}
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -277,7 +266,7 @@ export default function TemplatesPage() {
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-4">
               <TabsTrigger value="all">
-                すべて ({templateData.length})
+                すべて ({displayTemplates.length})
               </TabsTrigger>
               <TabsTrigger value="popular">人気</TabsTrigger>
               <TabsTrigger value="recent">最新</TabsTrigger>
@@ -292,12 +281,12 @@ export default function TemplatesPage() {
                     : "grid-cols-1"
                 }`}
               >
-                {templateData.map((template) => (
+                {displayTemplates.map((template) => (
                   <TemplateCard key={template.id} template={template} />
                 ))}
               </div>
 
-              {templateData.length === 0 && (
+              {displayTemplates.length === 0 && (
                 <div className="text-center py-12">
                   <Puzzle className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                   <p className="text-gray-500 mb-4">
