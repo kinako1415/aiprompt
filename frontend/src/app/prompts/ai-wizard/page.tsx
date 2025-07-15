@@ -3,7 +3,10 @@
 import { useRouter } from "next/navigation";
 import { PromptWizard } from "../../../components/PromptWizard";
 import { PromptTemplate } from "../../../components/PromptWizard";
-import { MockTemplateService, MockPromptService } from "../../../utils/mockServices";
+import {
+  MockTemplateService,
+  MockPromptService,
+} from "../../../utils/mockServices";
 
 export default function AIAssistedPromptPage() {
   const router = useRouter();

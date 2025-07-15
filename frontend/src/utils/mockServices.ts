@@ -15,7 +15,7 @@ interface BasicPrompt {
   tags: string[];
   aiModel: string;
   template_id?: string;
-  visibility?: 'private' | 'public' | 'team';
+  visibility?: "private" | "public" | "team";
   isPublic?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -27,7 +27,7 @@ interface BasicPrompt {
 // テンプレートのモック実装
 export class MockTemplateService {
   // テンプレートを保存
-  static saveTemplate(template: Omit<PromptTemplate, 'id'>): PromptTemplate {
+  static saveTemplate(template: Omit<PromptTemplate, "id">): PromptTemplate {
     const templates = this.getTemplates();
     const newTemplate: PromptTemplate = {
       ...template,
@@ -38,10 +38,10 @@ export class MockTemplateService {
       rating: 0,
       ratingCount: 0,
     };
-    
+
     templates.push(newTemplate);
     localStorage.setItem(TEMPLATES_STORAGE_KEY, JSON.stringify(templates));
-    
+
     console.log("テンプレートが保存されました:", newTemplate);
     return newTemplate;
   }
@@ -55,22 +55,25 @@ export class MockTemplateService {
   // 特定のテンプレートを取得
   static getTemplate(id: string): PromptTemplate | null {
     const templates = this.getTemplates();
-    return templates.find(t => t.id === id) || null;
+    return templates.find((t) => t.id === id) || null;
   }
 
   // テンプレートを更新
-  static updateTemplate(id: string, updates: Partial<PromptTemplate>): PromptTemplate | null {
+  static updateTemplate(
+    id: string,
+    updates: Partial<PromptTemplate>
+  ): PromptTemplate | null {
     const templates = this.getTemplates();
-    const index = templates.findIndex(t => t.id === id);
-    
+    const index = templates.findIndex((t) => t.id === id);
+
     if (index === -1) return null;
-    
+
     templates[index] = {
       ...templates[index],
       ...updates,
       updatedAt: new Date().toISOString(),
     };
-    
+
     localStorage.setItem(TEMPLATES_STORAGE_KEY, JSON.stringify(templates));
     return templates[index];
   }
@@ -78,30 +81,30 @@ export class MockTemplateService {
   // テンプレートを削除
   static deleteTemplate(id: string): boolean {
     const templates = this.getTemplates();
-    const filtered = templates.filter(t => t.id !== id);
-    
+    const filtered = templates.filter((t) => t.id !== id);
+
     if (filtered.length === templates.length) return false;
-    
+
     localStorage.setItem(TEMPLATES_STORAGE_KEY, JSON.stringify(filtered));
     return true;
   }
 
   // テンプレートからプロンプトを生成
   static generateFromTemplate(
-    templateId: string, 
+    templateId: string,
     variables: Record<string, string | number | boolean>
   ): string {
     const template = this.getTemplate(templateId);
     if (!template) throw new Error("テンプレートが見つかりません");
-    
+
     let content = template.content;
-    
+
     // 変数を置き換え
     for (const [key, value] of Object.entries(variables)) {
-      const regex = new RegExp(`\\{${key}\\}`, 'g');
+      const regex = new RegExp(`\\{${key}\\}`, "g");
       content = content.replace(regex, String(value));
     }
-    
+
     return content;
   }
 }
@@ -109,7 +112,7 @@ export class MockTemplateService {
 // プロンプトのモック実装
 export class MockPromptService {
   // プロンプトを保存
-  static savePrompt(prompt: Omit<BasicPrompt, 'id'>): BasicPrompt {
+  static savePrompt(prompt: Omit<BasicPrompt, "id">): BasicPrompt {
     const prompts = this.getPrompts();
     const newPrompt: BasicPrompt = {
       ...prompt,
@@ -120,10 +123,10 @@ export class MockPromptService {
       rating: 0,
       ratingCount: 0,
     };
-    
+
     prompts.push(newPrompt);
     localStorage.setItem(PROMPTS_STORAGE_KEY, JSON.stringify(prompts));
-    
+
     console.log("プロンプトが保存されました:", newPrompt);
     return newPrompt;
   }
@@ -137,22 +140,25 @@ export class MockPromptService {
   // 特定のプロンプトを取得
   static getPrompt(id: string): BasicPrompt | null {
     const prompts = this.getPrompts();
-    return prompts.find(p => p.id === id) || null;
+    return prompts.find((p) => p.id === id) || null;
   }
 
   // プロンプトを更新
-  static updatePrompt(id: string, updates: Partial<BasicPrompt>): BasicPrompt | null {
+  static updatePrompt(
+    id: string,
+    updates: Partial<BasicPrompt>
+  ): BasicPrompt | null {
     const prompts = this.getPrompts();
-    const index = prompts.findIndex(p => p.id === id);
-    
+    const index = prompts.findIndex((p) => p.id === id);
+
     if (index === -1) return null;
-    
+
     prompts[index] = {
       ...prompts[index],
       ...updates,
       updatedAt: new Date().toISOString(),
     };
-    
+
     localStorage.setItem(PROMPTS_STORAGE_KEY, JSON.stringify(prompts));
     return prompts[index];
   }
@@ -160,10 +166,10 @@ export class MockPromptService {
   // プロンプトを削除
   static deletePrompt(id: string): boolean {
     const prompts = this.getPrompts();
-    const filtered = prompts.filter(p => p.id !== id);
-    
+    const filtered = prompts.filter((p) => p.id !== id);
+
     if (filtered.length === prompts.length) return false;
-    
+
     localStorage.setItem(PROMPTS_STORAGE_KEY, JSON.stringify(filtered));
     return true;
   }
@@ -172,13 +178,15 @@ export class MockPromptService {
 // サンプルデータを初期化
 export const initializeSampleData = () => {
   const templates = MockTemplateService.getTemplates();
-  
+
   if (templates.length === 0) {
     // サンプルテンプレートを作成
-    const sampleTemplate: Omit<PromptTemplate, 'id'> = {
+    const sampleTemplate: Omit<PromptTemplate, "id"> = {
       name: "ブログ記事作成テンプレート",
-      description: "SEOに最適化されたブログ記事を効率的に作成するためのテンプレート",
-      content: "あなたは経験豊富なブログライターです。\n\n以下のテーマで{word_count}文字程度のブログ記事を作成してください。\n\n**テーマ**: {theme}\n**対象読者**: {target_audience}\n**SEOキーワード**: {seo_keywords}\n\n記事には以下の要素を含めてください：\n- 魅力的なタイトル\n- 導入部分\n- 見出しのある本文\n- まとめ\n\n読者にとって有益で、SEOに効果的な記事を作成してください。",
+      description:
+        "SEOに最適化されたブログ記事を効率的に作成するためのテンプレート",
+      content:
+        "あなたは経験豊富なブログライターです。\n\n以下のテーマで{word_count}文字程度のブログ記事を作成してください。\n\n**テーマ**: {theme}\n**対象読者**: {target_audience}\n**SEOキーワード**: {seo_keywords}\n\n記事には以下の要素を含めてください：\n- 魅力的なタイトル\n- 導入部分\n- 見出しのある本文\n- まとめ\n\n読者にとって有益で、SEOに効果的な記事を作成してください。",
       category: "文章生成",
       tags: ["ブログ", "SEO", "マーケティング"],
       variables: [
@@ -215,13 +223,13 @@ export const initializeSampleData = () => {
         usageCount: 856,
       },
     };
-    
+
     MockTemplateService.saveTemplate(sampleTemplate);
     console.log("サンプルテンプレートが作成されました");
   }
 };
 
 // 開発環境でのデータ初期化
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
   initializeSampleData();
 }

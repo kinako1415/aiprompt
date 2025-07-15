@@ -29,7 +29,7 @@ export interface PromptTemplate {
 
 export interface PromptVariable {
   name: string;
-  type: 'text' | 'number' | 'select' | 'textarea';
+  type: "text" | "number" | "select" | "textarea";
   description?: string;
   required?: boolean;
   defaultValue?: string;
@@ -59,7 +59,7 @@ export interface UpdateTemplateRequest {
 export interface TemplateFilter {
   category?: string;
   tags?: string[];
-  visibility?: 'private' | 'public' | 'shared';
+  visibility?: "private" | "public" | "shared";
   search?: string;
 }
 

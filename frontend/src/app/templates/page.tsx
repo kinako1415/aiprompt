@@ -29,7 +29,7 @@ export default function TemplatesPage() {
   const [activeTab, setActiveTab] = useState("all");
   const [templates, setTemplates] = useState<PromptTemplate[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // テンプレートを読み込む
   useEffect(() => {
     const loadTemplates = () => {
@@ -43,14 +43,16 @@ export default function TemplatesPage() {
         setIsLoading(false);
       }
     };
-    
+
     loadTemplates();
   }, []);
 
   // 検索フィルタリング
-  const filteredTemplates = templates.filter(template => 
-    template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (template.description && template.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredTemplates = templates.filter(
+    (template) =>
+      template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (template.description &&
+        template.description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   // 表示するテンプレートデータの決定
@@ -61,11 +63,7 @@ export default function TemplatesPage() {
     console.log(`${action} action for template ${templateId}`);
   };
 
-  const TemplateCard = ({
-    template,
-  }: {
-    template: PromptTemplate;
-  }) => (
+  const TemplateCard = ({ template }: { template: PromptTemplate }) => (
     <Card className="transition-shadow cursor-pointer">
       <CardHeader>
         <div className="flex items-start justify-between">
@@ -86,11 +84,12 @@ export default function TemplatesPage() {
 
             <div className="flex items-center gap-2 mb-2">
               <Badge variant="outline">{template.category}</Badge>
-              {template.tags && template.tags.slice(0, 2).map((tag) => (
-                <Badge key={tag} variant="secondary" className="text-xs">
-                  {tag}
-                </Badge>
-              ))}
+              {template.tags &&
+                template.tags.slice(0, 2).map((tag) => (
+                  <Badge key={tag} variant="secondary" className="text-xs">
+                    {tag}
+                  </Badge>
+                ))}
               {template.tags && template.tags.length > 2 && (
                 <span className="text-xs text-gray-500">
                   +{template.tags.length - 2}
@@ -99,7 +98,7 @@ export default function TemplatesPage() {
             </div>
 
             <div className="text-xs text-gray-500">
-              変数: {template.variables.map(v => v.name).join(", ")}
+              変数: {template.variables.map((v) => v.name).join(", ")}
             </div>
           </div>
         </div>
