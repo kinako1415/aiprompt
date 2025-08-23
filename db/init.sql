@@ -94,6 +94,14 @@ CREATE TABLE prompts (
   updated_at timestamptz NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE prompt_favorites (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v7(),
+  user_id uuid REFERENCES users(id) ON DELETE CASCADE,
+  prompt_id uuid REFERENCES prompts(id) ON DELETE CASCADE,
+  created_at timestamptz NOT NULL DEFAULT NOW(),
+  updated_at timestamptz NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE tags (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v7(),
   name text NOT NULL,
@@ -109,7 +117,15 @@ CREATE TABLE prompt_tags(
   updated_at timestamptz NOT NULL DEFAULT NOW()
 );
 
-create table assets (
+CREATE TABLE prompt_assets (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v7(),
+  prompt_id uuid REFERENCES prompts(id) ON DELETE CASCADE,
+  asset_id uuid REFERENCES assets(id) ON DELETE CASCADE,
+  created_at timestamptz NOT NULL DEFAULT NOW(),
+  updated_at timestamptz NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE assets (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v7(),
   project_id uuid REFERENCES projects(id) ON DELETE CASCADE,
   file_name text NOT NULL,
